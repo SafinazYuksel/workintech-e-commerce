@@ -1,6 +1,7 @@
 import {
   SET_CATEGORIES,
   SET_PRODUCT_LIST,
+  SET_PRODUCT,
   SET_TOTAL,
   SET_FETCH_STATE,
   SET_LIMIT,
@@ -11,11 +12,12 @@ import {
 const initialState = {
   categories: [],
   productList: [],
+  product: null,
   total: 0,
   limit: 25,
   offset: 0,
   filter: '',
-  fetchState: 'NOT_FETCHED'
+  fetchState: 'NOT_FETCHED' // "NOT_FETCHED", "FETCHING", "FETCHED", "FAILED"
 };
 
 export const productReducer = (state = initialState, action) => {
@@ -24,6 +26,8 @@ export const productReducer = (state = initialState, action) => {
       return { ...state, categories: action.payload };
     case SET_PRODUCT_LIST:
       return { ...state, productList: action.payload };
+    case SET_PRODUCT:
+      return { ...state, product: action.payload };
     case SET_TOTAL:
       return { ...state, total: action.payload };
     case SET_FETCH_STATE:
