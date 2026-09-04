@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import md5 from 'md5';
-import { LogOut, User, ShoppingCart as CartIcon, Search, Heart, Menu } from 'lucide-react';
+import { LogOut, User, ShoppingCart as CartIcon, Search, Heart } from 'lucide-react';
 import { logout } from '../store/actions/clientActions';
 
 export default function Header() {
@@ -50,13 +50,13 @@ export default function Header() {
           <Link to="/" className="hover:text-indigo-600 transition">
             Home
           </Link>
-          <Link to="/shop/kadin/ceket/3/gri-regular-astar/322" className="hover:text-indigo-600 transition">
+          <Link to="/" className="hover:text-indigo-600 transition">
             Shop
           </Link>
-          <Link to="/team" className="hover:text-indigo-600 transition">
-            Team
+          <Link to="/" className="hover:text-indigo-600 transition">
+            About
           </Link>
-          <Link to="/contact" className="hover:text-indigo-600 transition">
+          <Link to="/" className="hover:text-indigo-600 transition">
             Contact
           </Link>
         </nav>
@@ -69,14 +69,14 @@ export default function Header() {
           </button>
 
           {/* Cart Icon */}
-          <Link to="/cart" className="text-slate-600 hover:text-indigo-600 p-1 relative">
+          <button className="text-slate-600 hover:text-indigo-600 p-1 relative">
             <CartIcon className="w-5 h-5" />
             {totalCartItems > 0 && (
               <span className="absolute -top-1.5 -right-1.5 bg-indigo-600 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
                 {totalCartItems}
               </span>
             )}
-          </Link>
+          </button>
 
           {/* Wishlist */}
           <button className="text-slate-600 hover:text-indigo-600 p-1 hidden sm:block">
