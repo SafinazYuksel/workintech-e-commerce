@@ -12,4 +12,11 @@ const rootReducer = combineReducers({
   shoppingCart: shoppingCartReducer
 });
 
-export const store = createStore(rootReducer, applyMiddleware(thunk, logger));
+const middlewares = [thunk];
+
+// Safely enable logger only in dev environment
+if (import.meta.env?.DEV) {
+  middlewares.push(logger);
+}
+
+export const store = createStore(rootReducer, applyMiddleware(...middlewares));
