@@ -69,8 +69,7 @@ export default function ShoppingCartPage() {
       toast.warning('Lütfen sipariş vermek için en az bir ürün seçiniz.');
       return;
     }
-    // As per T19 spec: "There should be Create Order button but have no functionality yet"
-    toast.info('Sipariş oluşturma işlemi sonraki aşamalarda aktifleştirilecektir.');
+    navigate('/order');
   };
 
   if (cart.length === 0) {

@@ -5,9 +5,11 @@ export const SET_USER = 'SET_USER';
 export const SET_ROLES = 'SET_ROLES';
 export const SET_THEME = 'SET_THEME';
 export const SET_LANGUAGE = 'SET_LANGUAGE';
+export const SET_ADDRESS_LIST = 'SET_ADDRESS_LIST';
 export const LOGOUT = 'LOGOUT';
 
 export const setUser = (user) => ({ type: SET_USER, payload: user });
+export const setAddressList = (addressList) => ({ type: SET_ADDRESS_LIST, payload: addressList });
 export const setRoles = (roles) => ({ type: SET_ROLES, payload: roles });
 export const setTheme = (theme) => ({ type: SET_THEME, payload: theme });
 export const setLanguage = (language) => ({ type: SET_LANGUAGE, payload: language });
@@ -87,3 +89,59 @@ export const fetchRoles = () => async (dispatch, getState) => {
     console.error('Roles fetch error in thunk:', error);
   }
 };
+
+// Address Thunks (T20)
+export const fetchAddressList = () => async (dispatch) => {
+  try {
+    const res = await API.get('/user/address');
+    dispatch(setAddressList(res.data));
+    return res.data;
+  } catch (error) {
+    console.error('Fetch address list error:', error);
+    toast.error('Adres bilgileri alınamadı.');
+    return [];
+  }
+};
+
+export const addAddress = (addressData) => async (dispatch) => {
+  try {
+    const res = await API.post('/user/address', addressData);
+    toast.success('Yeni adres başarıyla eklendi.');
+    dispatch(fetchAddressList());
+    return { success: true, data: res.data };
+  } catch (error) {
+    console.error('Add address error:', error);
+    const msg = error.response?.data?.message || 'Adres eklenirken bir hata oluştu.';
+    toast.error(msg);
+    return { success: false, error: msg };
+  }
+};
+
+export const updateAddress = (addressData) => async (dispatch) => {
+  try {
+    const res = await API.put('/user/address', addressData);
+    toast.success('Adres başarıyla güncellendi.');
+    dispatch(fetchAddressList());
+    return { success: true, data: res.data };
+  } catch (error) {
+    console.error('Update address error:', error);
+    const msg = error.response?.data?.message || 'Adres güncellenirken bir hata oluştu.';
+    toast.error(msg);
+    return { success: false, error: msg };
+  }
+};
+
+export const deleteAddress = (addressId) => async (dispatch) => {
+  try {
+    await API.delete(`/user/address/${addressId}`);
+    toast.info('Adres silindi.');
+    dispatch(fetchAddressList());
+    return { success: true };
+  } catch (error) {
+    console.error('Delete address error:', error);
+    const msg = error.response?.data?.message || 'Adres silinirken bir hata oluştu.';
+    toast.error(msg);
+    return { success: false, error: msg };
+  }
+};
+

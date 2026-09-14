@@ -233,7 +233,7 @@ export default function Header() {
                         Sepete Git
                       </Link>
                       <Link
-                        to="/cart"
+                        to="/order"
                         onClick={() => setIsCartMenuOpen(false)}
                         className="py-2.5 px-3 text-center bg-orange-500 hover:bg-orange-600 text-white rounded-xl text-xs font-bold transition shadow-sm"
                       >
