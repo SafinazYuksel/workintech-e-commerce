@@ -36,7 +36,7 @@ export default function ProductDetailPage() {
         count: newCart[existingIndex].count + 1
       };
     } else {
-      newCart.push({ count: 1, product });
+      newCart.push({ count: 1, checked: true, product });
     }
 
     dispatch(setCart(newCart));

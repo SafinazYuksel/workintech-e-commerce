@@ -159,14 +159,18 @@ export default function Header() {
           </button>
 
           {/* Cart Icon */}
-          <button className="text-slate-600 hover:text-indigo-600 p-1 relative">
+          <Link
+            to="/cart"
+            className="text-slate-600 hover:text-indigo-600 p-1 relative flex items-center transition"
+            title="Sepetime Git"
+          >
             <CartIcon className="w-5 h-5" />
             {totalCartItems > 0 && (
               <span className="absolute -top-1.5 -right-1.5 bg-indigo-600 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
                 {totalCartItems}
               </span>
             )}
-          </button>
+          </Link>
 
           {/* Wishlist */}
           <button className="text-slate-600 hover:text-indigo-600 p-1 hidden sm:block">

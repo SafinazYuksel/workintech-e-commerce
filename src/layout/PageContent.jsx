@@ -5,6 +5,7 @@ import ShopPage from '../pages/ShopPage';
 import SignUpPage from '../pages/SignUpPage';
 import LoginPage from '../pages/LoginPage';
 import ProductDetailPage from '../pages/ProductDetailPage';
+import ShoppingCartPage from '../pages/ShoppingCartPage';
 
 export default function PageContent() {
   return (
@@ -15,6 +16,7 @@ export default function PageContent() {
         <Route path="/shop/:gender/:categoryName/:categoryId" element={<ShopPage />} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/cart" element={<ShoppingCartPage />} />
         <Route path="/product/:productId" element={<ProductDetailPage />} />
         <Route
           path="/shop/:gender/:categoryName/:categoryId/:productNameSlug/:productId"
