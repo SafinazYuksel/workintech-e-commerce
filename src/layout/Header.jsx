@@ -50,7 +50,7 @@ export default function Header() {
           <Link to="/" className="hover:text-indigo-600 transition">
             Home
           </Link>
-          <Link to="/" className="hover:text-indigo-600 transition">
+          <Link to="/shop" className="hover:text-indigo-600 transition">
             Shop
           </Link>
           <Link to="/" className="hover:text-indigo-600 transition">
