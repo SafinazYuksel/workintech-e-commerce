@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import md5 from 'md5';
-import { LogOut, User, ShoppingCart as CartIcon, Search, Heart } from 'lucide-react';
+import { LogOut, User, ShoppingCart as CartIcon, Search, Heart, ChevronDown } from 'lucide-react';
 import { logout } from '../store/actions/clientActions';
 
 export default function Header() {
@@ -10,6 +10,9 @@ export default function Header() {
   const navigate = useNavigate();
   const user = useSelector((state) => state.client.user);
   const cart = useSelector((state) => state.shoppingCart.cart);
+  const categories = useSelector((state) => state.product.categories);
+
+  const [isShopMenuOpen, setIsShopMenuOpen] = useState(false);
 
   const totalCartItems = cart ? cart.reduce((acc, item) => acc + item.count, 0) : 0;
   const isLoggedIn = user && (user.email || user.name);
@@ -23,6 +26,19 @@ export default function Header() {
   const handleLogout = () => {
     dispatch(logout());
     navigate('/login');
+  };
+
+  // Group categories by gender for dropdown
+  const womenCategories = categories
+    ? categories.filter((cat) => cat.gender === 'k' || cat.code?.startsWith('k:'))
+    : [];
+  const menCategories = categories
+    ? categories.filter((cat) => cat.gender === 'e' || cat.code?.startsWith('e:'))
+    : [];
+
+  const getCategoryLink = (cat, genderLabel) => {
+    const slug = cat.title ? cat.title.toLowerCase().replace(/[^a-z0-9]+/g, '-') : 'kategori';
+    return `/shop/${genderLabel}/${slug}/${cat.id}`;
   };
 
   return (
@@ -50,9 +66,83 @@ export default function Header() {
           <Link to="/" className="hover:text-indigo-600 transition">
             Home
           </Link>
-          <Link to="/shop" className="hover:text-indigo-600 transition">
-            Shop
-          </Link>
+
+          {/* Shop Dropdown Menu (T12) */}
+          <div
+            className="relative"
+            onMouseEnter={() => setIsShopMenuOpen(true)}
+            onMouseLeave={() => setIsShopMenuOpen(false)}
+          >
+            <Link
+              to="/shop"
+              className="hover:text-indigo-600 transition flex items-center gap-1 py-4"
+            >
+              Shop <ChevronDown className="w-4 h-4" />
+            </Link>
+
+            {/* Dropdown Menu Container */}
+            {isShopMenuOpen && (
+              <div className="absolute top-full left-0 w-80 bg-white border border-gray-100 shadow-xl rounded-b-xl p-6 z-50 grid grid-cols-2 gap-6 animate-fadeIn">
+                {/* Kadın Column */}
+                <div>
+                  <h4 className="text-xs font-black text-slate-900 uppercase border-b border-gray-100 pb-2 mb-3 tracking-wider">
+                    Kadın
+                  </h4>
+                  <ul className="space-y-2 text-xs">
+                    {womenCategories.length > 0 ? (
+                      womenCategories.map((cat) => (
+                        <li key={cat.id}>
+                          <Link
+                            to={getCategoryLink(cat, 'kadin')}
+                            onClick={() => setIsShopMenuOpen(false)}
+                            className="text-slate-600 hover:text-indigo-600 font-medium transition block"
+                          >
+                            {cat.title}
+                          </Link>
+                        </li>
+                      ))
+                    ) : (
+                      <>
+                        <li><Link to="/shop/kadin/tisort/1" className="text-slate-600 hover:text-indigo-600 block">Tişört</Link></li>
+                        <li><Link to="/shop/kadin/ayakkabi/2" className="text-slate-600 hover:text-indigo-600 block">Ayakkabı</Link></li>
+                        <li><Link to="/shop/kadin/ceket/3" className="text-slate-600 hover:text-indigo-600 block">Ceket</Link></li>
+                        <li><Link to="/shop/kadin/elbise/5" className="text-slate-600 hover:text-indigo-600 block">Elbise</Link></li>
+                      </>
+                    )}
+                  </ul>
+                </div>
+
+                {/* Erkek Column */}
+                <div>
+                  <h4 className="text-xs font-black text-slate-900 uppercase border-b border-gray-100 pb-2 mb-3 tracking-wider">
+                    Erkek
+                  </h4>
+                  <ul className="space-y-2 text-xs">
+                    {menCategories.length > 0 ? (
+                      menCategories.map((cat) => (
+                        <li key={cat.id}>
+                          <Link
+                            to={getCategoryLink(cat, 'erkek')}
+                            onClick={() => setIsShopMenuOpen(false)}
+                            className="text-slate-600 hover:text-indigo-600 font-medium transition block"
+                          >
+                            {cat.title}
+                          </Link>
+                        </li>
+                      ))
+                    ) : (
+                      <>
+                        <li><Link to="/shop/erkek/gomlek/11" className="text-slate-600 hover:text-indigo-600 block">Gömlek</Link></li>
+                        <li><Link to="/shop/erkek/pantolon/12" className="text-slate-600 hover:text-indigo-600 block">Pantolon</Link></li>
+                        <li><Link to="/shop/erkek/ayakkabi/4" className="text-slate-600 hover:text-indigo-600 block">Ayakkabı</Link></li>
+                      </>
+                    )}
+                  </ul>
+                </div>
+              </div>
+            )}
+          </div>
+
           <Link to="/" className="hover:text-indigo-600 transition">
             About
           </Link>

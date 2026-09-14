@@ -36,12 +36,11 @@ export default function ShopPage() {
     dispatch(fetchProducts(params));
   }, [categoryId, filterState, sortState, dispatch]);
 
-  // 3. Handle Filter submit / change
+  // 3. Handle Filter submit
   const handleFilterSubmit = (e) => {
     if (e) e.preventDefault();
     setFilterState(filterInput);
 
-    // Update query params in URL while keeping existing
     const newParams = new URLSearchParams(searchParams);
     if (filterInput) {
       newParams.set('filter', filterInput);
@@ -65,25 +64,26 @@ export default function ShopPage() {
     setSearchParams(newParams);
   };
 
-  // 5. Handle Category selection
+  // 5. Handle Category selection (navigates to shop/:gender/:categoryName/:categoryId)
   const handleCategoryClick = (cat) => {
-    const catGender = cat.gender === 'k' ? 'kadin' : 'erkek';
+    const catGender = cat.gender === 'k' || cat.code?.startsWith('k:') ? 'kadin' : 'erkek';
     const slug = cat.title ? cat.title.toLowerCase().replace(/[^a-z0-9]+/g, '-') : 'kategori';
 
-    // Preserve filter & sort search params when navigating category
     const searchString = searchParams.toString() ? `?${searchParams.toString()}` : '';
     navigate(`/shop/${catGender}/${slug}/${cat.id}${searchString}`);
   };
 
-  // Sample default categories if API hasn't loaded
-  const displayCategories = categories && categories.length > 0
-    ? categories.slice(0, 5)
+  // T12 Requirement: Top 5 categories listed on screen with images regarding rating value
+  const top5Categories = categories && categories.length > 0
+    ? [...categories]
+        .sort((a, b) => (b.rating || 0) - (a.rating || 0))
+        .slice(0, 5)
     : [
-        { id: 1, title: 'KADIN TİŞÖRT', code: 'k:tisort', gender: 'k', img: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=500&q=80' },
-        { id: 2, title: 'ERKEK TİŞÖRT', code: 'e:tisort', gender: 'e', img: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=500&q=80' },
-        { id: 3, title: 'KADIN CEKET', code: 'k:ceket', gender: 'k', img: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&w=500&q=80' },
-        { id: 4, title: 'ERKEK AYAKKABI', code: 'e:ayakkabi', gender: 'e', img: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=500&q=80' },
-        { id: 5, title: 'KADIN ELBİSE', code: 'k:elbise', gender: 'k', img: 'https://images.unsplash.com/photo-1539533018447-63fcce2678e3?auto=format&fit=crop&w=500&q=80' }
+        { id: 1, title: 'KADIN TİŞÖRT', code: 'k:tisort', gender: 'k', rating: 4.9, img: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=500&q=80' },
+        { id: 2, title: 'ERKEK KOT', code: 'e:tisort', gender: 'e', rating: 4.8, img: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=500&q=80' },
+        { id: 3, title: 'KADIN CEKET', code: 'k:ceket', gender: 'k', rating: 4.7, img: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&w=500&q=80' },
+        { id: 4, title: 'ERKEK AYAKKABI', code: 'e:ayakkabi', gender: 'e', rating: 4.6, img: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=500&q=80' },
+        { id: 5, title: 'KADIN ELBİSE', code: 'k:elbise', gender: 'k', rating: 4.5, img: 'https://images.unsplash.com/photo-1539533018447-63fcce2678e3?auto=format&fit=crop&w=500&q=80' }
       ];
 
   return (
@@ -112,10 +112,10 @@ export default function ShopPage() {
         </div>
       </div>
 
-      {/* Categories Banner Section */}
+      {/* Top 5 Categories Section (Sorted by rating) */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-6">
         <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-          {displayCategories.map((cat) => (
+          {top5Categories.map((cat) => (
             <div
               key={cat.id}
               onClick={() => handleCategoryClick(cat)}
@@ -132,7 +132,7 @@ export default function ShopPage() {
               />
               <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition flex flex-col items-center justify-center text-white text-center p-2">
                 <h3 className="text-sm font-extrabold uppercase tracking-wide">{cat.title || cat.name}</h3>
-                <span className="text-[11px] font-medium text-indigo-200 mt-1">Kategori #{cat.id}</span>
+                <span className="text-[11px] font-medium text-indigo-200 mt-1">⭐ Puan: {cat.rating || '5.0'}</span>
               </div>
             </div>
           ))}
