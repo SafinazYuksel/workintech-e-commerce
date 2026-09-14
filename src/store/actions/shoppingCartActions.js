@@ -1,4 +1,5 @@
 export const SET_CART = 'SET_CART';
+export const ADD_TO_CART = 'ADD_TO_CART';
 export const UPDATE_CART_ITEM_COUNT = 'UPDATE_CART_ITEM_COUNT';
 export const TOGGLE_CART_ITEM_CHECK = 'TOGGLE_CART_ITEM_CHECK';
 export const REMOVE_FROM_CART = 'REMOVE_FROM_CART';
@@ -7,6 +8,7 @@ export const SET_PAYMENT = 'SET_PAYMENT';
 export const SET_ADDRESS = 'SET_ADDRESS';
 
 export const setCart = (cart) => ({ type: SET_CART, payload: cart });
+export const addToCart = (product) => ({ type: ADD_TO_CART, payload: product });
 export const updateCartItemCount = (productId, count) => ({
   type: UPDATE_CART_ITEM_COUNT,
   payload: { productId, count }

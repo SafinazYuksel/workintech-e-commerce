@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { ArrowLeft, Loader2, Star, ShoppingCart, Check } from 'lucide-react';
 import { fetchProductDetail } from '../store/actions/productActions';
-import { setCart } from '../store/actions/shoppingCartActions';
+import { addToCart } from '../store/actions/shoppingCartActions';
 import { toast } from 'react-toastify';
 
 export default function ProductDetailPage() {
@@ -13,7 +13,6 @@ export default function ProductDetailPage() {
 
   const product = useSelector((state) => state.product.product);
   const fetchState = useSelector((state) => state.product.fetchState);
-  const cart = useSelector((state) => state.shoppingCart.cart);
 
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [addedToCart, setAddedToCart] = useState(false);
@@ -27,19 +26,7 @@ export default function ProductDetailPage() {
   const handleAddToCart = () => {
     if (!product) return;
 
-    const existingIndex = cart.findIndex((item) => item.product.id === product.id);
-    let newCart = [...cart];
-
-    if (existingIndex > -1) {
-      newCart[existingIndex] = {
-        ...newCart[existingIndex],
-        count: newCart[existingIndex].count + 1
-      };
-    } else {
-      newCart.push({ count: 1, checked: true, product });
-    }
-
-    dispatch(setCart(newCart));
+    dispatch(addToCart(product));
     setAddedToCart(true);
     toast.success(`${product.name} sepetinize eklendi!`);
 

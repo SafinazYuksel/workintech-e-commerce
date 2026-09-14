@@ -13,6 +13,7 @@ export default function Header() {
   const categories = useSelector((state) => state.product.categories);
 
   const [isShopMenuOpen, setIsShopMenuOpen] = useState(false);
+  const [isCartMenuOpen, setIsCartMenuOpen] = useState(false);
 
   const totalCartItems = cart ? cart.reduce((acc, item) => acc + item.count, 0) : 0;
   const isLoggedIn = user && (user.email || user.name);
@@ -158,19 +159,92 @@ export default function Header() {
             <Search className="w-5 h-5" />
           </button>
 
-          {/* Cart Icon */}
-          <Link
-            to="/cart"
-            className="text-slate-600 hover:text-indigo-600 p-1 relative flex items-center transition"
-            title="Sepetime Git"
+          {/* Cart Icon & Dropdown (T17) */}
+          <div
+            className="relative"
+            onMouseEnter={() => setIsCartMenuOpen(true)}
+            onMouseLeave={() => setIsCartMenuOpen(false)}
           >
-            <CartIcon className="w-5 h-5" />
-            {totalCartItems > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 bg-indigo-600 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
-                {totalCartItems}
-              </span>
+            <Link
+              to="/cart"
+              className="text-slate-600 hover:text-orange-600 p-1 relative flex items-center transition"
+              title="Sepetime Git"
+            >
+              <CartIcon className="w-5 h-5" />
+              {totalCartItems > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 bg-orange-600 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                  {totalCartItems}
+                </span>
+              )}
+            </Link>
+
+            {/* Cart Dropdown Container */}
+            {isCartMenuOpen && (
+              <div className="absolute top-full right-0 w-80 sm:w-96 bg-white border border-gray-100 shadow-2xl rounded-2xl p-4 z-50 animate-fadeIn">
+                <h3 className="text-sm font-bold text-slate-800 border-b border-gray-100 pb-3 mb-3">
+                  Sepetim ({totalCartItems} Ürün)
+                </h3>
+
+                {!cart || cart.length === 0 ? (
+                  <div className="py-8 text-center text-slate-500 text-xs">
+                    Sepetinizde ürün bulunmamaktadır.
+                  </div>
+                ) : (
+                  <>
+                    <div className="max-h-64 overflow-y-auto space-y-3 pr-1 divide-y divide-gray-50">
+                      {cart.map((item) => {
+                        const imageUrl =
+                          item.product?.images && item.product.images.length > 0
+                            ? item.product.images[0].url
+                            : 'https://via.placeholder.com/100?text=No+Image';
+
+                        const itemTotal = Number(item.product?.price || 0) * item.count;
+
+                        return (
+                          <div key={item.product.id} className="flex items-center space-x-3 pt-3 first:pt-0">
+                            <img
+                              src={imageUrl}
+                              alt={item.product.name}
+                              className="w-14 h-14 object-cover rounded-lg border border-gray-200 flex-shrink-0"
+                            />
+                            <div className="flex-1 min-w-0">
+                              <h4 className="text-xs font-bold text-slate-800 truncate">
+                                {item.product.name}
+                              </h4>
+                              <p className="text-[11px] text-slate-500 mt-0.5">
+                                Adet: {item.count}
+                              </p>
+                              <p className="text-xs font-extrabold text-orange-600 mt-1">
+                                ₺{itemTotal.toLocaleString('tr-TR', { minimumFractionDigits: 2 })}
+                              </p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* Action Buttons matching T17 mockup */}
+                    <div className="grid grid-cols-2 gap-3 border-t border-gray-100 pt-4 mt-3">
+                      <Link
+                        to="/cart"
+                        onClick={() => setIsCartMenuOpen(false)}
+                        className="py-2.5 px-3 text-center border border-gray-200 hover:border-gray-300 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 transition"
+                      >
+                        Sepete Git
+                      </Link>
+                      <Link
+                        to="/cart"
+                        onClick={() => setIsCartMenuOpen(false)}
+                        className="py-2.5 px-3 text-center bg-orange-500 hover:bg-orange-600 text-white rounded-xl text-xs font-bold transition shadow-sm"
+                      >
+                        Siparişi Tamamla
+                      </Link>
+                    </div>
+                  </>
+                )}
+              </div>
             )}
-          </Link>
+          </div>
 
           {/* Wishlist */}
           <button className="text-slate-600 hover:text-indigo-600 p-1 hidden sm:block">

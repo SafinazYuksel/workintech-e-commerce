@@ -1,5 +1,6 @@
 import {
   SET_CART,
+  ADD_TO_CART,
   UPDATE_CART_ITEM_COUNT,
   TOGGLE_CART_ITEM_CHECK,
   REMOVE_FROM_CART,
@@ -18,6 +19,23 @@ export const shoppingCartReducer = (state = initialState, action) => {
   switch (action.type) {
     case SET_CART:
       return { ...state, cart: action.payload };
+
+    case ADD_TO_CART: {
+      const product = action.payload;
+      const existingIndex = state.cart.findIndex((item) => item.product.id === product.id);
+
+      if (existingIndex > -1) {
+        const updatedCart = state.cart.map((item, index) =>
+          index === existingIndex ? { ...item, count: item.count + 1 } : item
+        );
+        return { ...state, cart: updatedCart };
+      } else {
+        return {
+          ...state,
+          cart: [...state.cart, { count: 1, checked: true, product }]
+        };
+      }
+    }
 
     case UPDATE_CART_ITEM_COUNT: {
       const { productId, count } = action.payload;
