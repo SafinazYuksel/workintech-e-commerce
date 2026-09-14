@@ -18,7 +18,49 @@ export const setLimit = (limit) => ({ type: SET_LIMIT, payload: limit });
 export const setOffset = (offset) => ({ type: SET_OFFSET, payload: offset });
 export const setFilter = (filter) => ({ type: SET_FILTER, payload: filter });
 
-// Thunk action creator to fetch product detail (T16)
+// Thunk action creator to fetch categories
+export const fetchCategories = () => async (dispatch, getState) => {
+  const { categories } = getState().product;
+  if (categories && categories.length > 0) return;
+
+  try {
+    const res = await API.get('/categories');
+    dispatch(setCategories(res.data));
+  } catch (error) {
+    console.error('Fetch categories error:', error);
+  }
+};
+
+// Thunk action creator to fetch products with category, filter, sort parameters
+export const fetchProducts = (params = {}) => async (dispatch) => {
+  dispatch(setFetchState('FETCHING'));
+  try {
+    const queryParams = new URLSearchParams();
+    if (params.category) queryParams.append('category', params.category);
+    if (params.filter) queryParams.append('filter', params.filter);
+    if (params.sort) queryParams.append('sort', params.sort);
+    if (params.limit) queryParams.append('limit', params.limit);
+    if (params.offset) queryParams.append('offset', params.offset);
+
+    const queryString = queryParams.toString();
+    const endpoint = queryString ? `/products?${queryString}` : '/products';
+
+    const res = await API.get(endpoint);
+    const productList = Array.isArray(res.data) ? res.data : (res.data.products || []);
+    const total = res.data.total !== undefined ? res.data.total : productList.length;
+
+    dispatch(setProductList(productList));
+    dispatch(setTotal(total));
+    dispatch(setFetchState('FETCHED'));
+    return { success: true, data: productList };
+  } catch (error) {
+    console.error('Fetch products error:', error);
+    dispatch(setFetchState('FAILED'));
+    return { success: false, error };
+  }
+};
+
+// Thunk action creator to fetch single product detail (T16)
 export const fetchProductDetail = (productId) => async (dispatch) => {
   dispatch(setFetchState('FETCHING'));
   try {

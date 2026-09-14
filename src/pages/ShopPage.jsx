@@ -1,137 +1,90 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { LayoutGrid, List, ChevronRight, Filter } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { LayoutGrid, List, ChevronRight, Filter as FilterIcon, Loader2 } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
-
-const categories = [
-  {
-    id: 1,
-    title: 'CLOTHS',
-    itemCount: '5 Items',
-    image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=500&q=80'
-  },
-  {
-    id: 2,
-    title: 'SHOES',
-    itemCount: '5 Items',
-    image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=500&q=80'
-  },
-  {
-    id: 3,
-    title: 'ACCESSORIES',
-    itemCount: '5 Items',
-    image: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=500&q=80'
-  },
-  {
-    id: 4,
-    title: 'JACKETS',
-    itemCount: '5 Items',
-    image: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=500&q=80'
-  },
-  {
-    id: 5,
-    title: 'DRESSES',
-    itemCount: '5 Items',
-    image: 'https://images.unsplash.com/photo-1539533018447-63fcce2678e3?auto=format&fit=crop&w=500&q=80'
-  }
-];
-
-const shopProducts = [
-  {
-    id: 322,
-    name: 'Gri Regular Astar Blazer Ceket',
-    description: 'Gri Regular Astar Detaylı Dokuma Blazer Ceket TWOAW20CE0316',
-    price: 461.99,
-    discount: 15,
-    rating: 4.8,
-    category_id: 3,
-    category_name: 'English Department',
-    images: [{ url: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&w=600&q=80' }]
-  },
-  {
-    id: 323,
-    name: 'Siyah Deri Ceket',
-    description: 'Şık ve modern kesim hakiki deri ceket.',
-    price: 899.90,
-    discount: 20,
-    rating: 4.9,
-    category_id: 3,
-    category_name: 'English Department',
-    images: [{ url: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=600&q=80' }]
-  },
-  {
-    id: 324,
-    name: 'Mavi Denim Kot Ceket',
-    description: 'Klasik tasarım rahat kalıp vintage denim ceket.',
-    price: 349.50,
-    rating: 4.6,
-    category_id: 3,
-    category_name: 'English Department',
-    images: [{ url: 'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&w=600&q=80' }]
-  },
-  {
-    id: 325,
-    name: 'Krem Yün Palto',
-    description: 'Sıcak tutan zarif ve uzun kesim yün palto.',
-    price: 1250.00,
-    discount: 10,
-    rating: 4.7,
-    category_id: 3,
-    category_name: 'English Department',
-    images: [{ url: 'https://images.unsplash.com/photo-1539533018447-63fcce2678e3?auto=format&fit=crop&w=600&q=80' }]
-  },
-  {
-    id: 326,
-    name: 'Klasik Beyaz Gömlek',
-    description: 'Zamansız şıklık ve nefes alabilir kumaş dokusu.',
-    price: 299.90,
-    rating: 4.5,
-    category_id: 1,
-    category_name: 'English Department',
-    images: [{ url: 'https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&w=600&q=80' }]
-  },
-  {
-    id: 327,
-    name: 'Spor Koşu Ayakkabısı',
-    description: 'Hafif tabanlı yüksek performanslı spor ayakkabı.',
-    price: 649.00,
-    discount: 12,
-    rating: 4.8,
-    category_id: 2,
-    category_name: 'English Department',
-    images: [{ url: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=600&q=80' }]
-  },
-  {
-    id: 328,
-    name: 'Güneş Gözlüğü Premium',
-    description: 'UV400 korumalı stil sahibi unisex güneş gözlüğü.',
-    price: 199.99,
-    rating: 4.4,
-    category_id: 3,
-    category_name: 'English Department',
-    images: [{ url: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=600&q=80' }]
-  },
-  {
-    id: 329,
-    name: 'Deri Kol Çantası',
-    description: 'Geniş iç hacimli şık kadın omuz çantası.',
-    price: 499.00,
-    discount: 15,
-    rating: 4.7,
-    category_id: 3,
-    category_name: 'English Department',
-    images: [{ url: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=600&q=80' }]
-  }
-];
+import { fetchProducts, fetchCategories } from '../store/actions/productActions';
 
 export default function ShopPage() {
-  const [viewMode, setViewMode] = useState('grid');
-  const [sortBy, setSortBy] = useState('popularity');
-  const [filterText, setFilterText] = useState('');
+  const { categoryId, gender, categoryName } = useParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const filteredProducts = shopProducts.filter((p) =>
-    p.name.toLowerCase().includes(filterText.toLowerCase())
-  );
+  const productList = useSelector((state) => state.product.productList);
+  const categories = useSelector((state) => state.product.categories);
+  const fetchState = useSelector((state) => state.product.fetchState);
+  const total = useSelector((state) => state.product.total);
+
+  const [viewMode, setViewMode] = useState('grid');
+  const [filterInput, setFilterInput] = useState(searchParams.get('filter') || '');
+  const [filterState, setFilterState] = useState(searchParams.get('filter') || '');
+  const [sortState, setSortState] = useState(searchParams.get('sort') || '');
+
+  // 1. Fetch categories on mount
+  useEffect(() => {
+    dispatch(fetchCategories());
+  }, [dispatch]);
+
+  // 2. Fetch products whenever categoryId, filterState, or sortState changes
+  useEffect(() => {
+    const params = {};
+    if (categoryId) params.category = categoryId;
+    if (filterState) params.filter = filterState;
+    if (sortState) params.sort = sortState;
+
+    dispatch(fetchProducts(params));
+  }, [categoryId, filterState, sortState, dispatch]);
+
+  // 3. Handle Filter submit / change
+  const handleFilterSubmit = (e) => {
+    if (e) e.preventDefault();
+    setFilterState(filterInput);
+
+    // Update query params in URL while keeping existing
+    const newParams = new URLSearchParams(searchParams);
+    if (filterInput) {
+      newParams.set('filter', filterInput);
+    } else {
+      newParams.delete('filter');
+    }
+    setSearchParams(newParams);
+  };
+
+  // 4. Handle Sort change
+  const handleSortChange = (e) => {
+    const value = e.target.value;
+    setSortState(value);
+
+    const newParams = new URLSearchParams(searchParams);
+    if (value) {
+      newParams.set('sort', value);
+    } else {
+      newParams.delete('sort');
+    }
+    setSearchParams(newParams);
+  };
+
+  // 5. Handle Category selection
+  const handleCategoryClick = (cat) => {
+    const catGender = cat.gender === 'k' ? 'kadin' : 'erkek';
+    const slug = cat.title ? cat.title.toLowerCase().replace(/[^a-z0-9]+/g, '-') : 'kategori';
+
+    // Preserve filter & sort search params when navigating category
+    const searchString = searchParams.toString() ? `?${searchParams.toString()}` : '';
+    navigate(`/shop/${catGender}/${slug}/${cat.id}${searchString}`);
+  };
+
+  // Sample default categories if API hasn't loaded
+  const displayCategories = categories && categories.length > 0
+    ? categories.slice(0, 5)
+    : [
+        { id: 1, title: 'KADIN TİŞÖRT', code: 'k:tisort', gender: 'k', img: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=500&q=80' },
+        { id: 2, title: 'ERKEK TİŞÖRT', code: 'e:tisort', gender: 'e', img: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=500&q=80' },
+        { id: 3, title: 'KADIN CEKET', code: 'k:ceket', gender: 'k', img: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&w=500&q=80' },
+        { id: 4, title: 'ERKEK AYAKKABI', code: 'e:ayakkabi', gender: 'e', img: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=500&q=80' },
+        { id: 5, title: 'KADIN ELBİSE', code: 'k:elbise', gender: 'k', img: 'https://images.unsplash.com/photo-1539533018447-63fcce2678e3?auto=format&fit=crop&w=500&q=80' }
+      ];
 
   return (
     <div className="bg-slate-50 min-h-screen py-8">
@@ -143,6 +96,18 @@ export default function ShopPage() {
             <Link to="/" className="text-slate-900 hover:text-indigo-600 transition">Home</Link>
             <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
             <span className="text-slate-400">Shop</span>
+            {gender && (
+              <>
+                <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+                <span className="text-indigo-600 capitalize">{gender}</span>
+              </>
+            )}
+            {categoryName && (
+              <>
+                <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+                <span className="text-indigo-600 capitalize">{categoryName}</span>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -150,19 +115,24 @@ export default function ShopPage() {
       {/* Categories Banner Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-6">
         <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-          {categories.map((cat) => (
+          {displayCategories.map((cat) => (
             <div
               key={cat.id}
-              className="relative h-48 rounded-xl overflow-hidden group cursor-pointer border border-gray-200 shadow-sm"
+              onClick={() => handleCategoryClick(cat)}
+              className={`relative h-48 rounded-xl overflow-hidden group cursor-pointer border shadow-sm transition duration-300 ${
+                String(cat.id) === String(categoryId)
+                  ? 'border-indigo-600 ring-4 ring-indigo-200'
+                  : 'border-gray-200 hover:border-indigo-400'
+              }`}
             >
               <img
-                src={cat.image}
-                alt={cat.title}
+                src={cat.img || cat.image || 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=500&q=80'}
+                alt={cat.title || cat.name}
                 className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
               />
-              <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition flex flex-col items-center justify-center text-white">
-                <h3 className="text-base font-extrabold uppercase tracking-wide">{cat.title}</h3>
-                <p className="text-xs font-medium text-slate-200 mt-1">{cat.itemCount}</p>
+              <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition flex flex-col items-center justify-center text-white text-center p-2">
+                <h3 className="text-sm font-extrabold uppercase tracking-wide">{cat.title || cat.name}</h3>
+                <span className="text-[11px] font-medium text-indigo-200 mt-1">Kategori #{cat.id}</span>
               </div>
             </div>
           ))}
@@ -172,14 +142,14 @@ export default function ShopPage() {
       {/* Controls & Filtering Bar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-8">
         <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
-          {/* Item Count Result */}
-          <span className="text-xs font-bold text-slate-500">
-            Showing all {filteredProducts.length} results
+          {/* Total items result count */}
+          <span className="text-xs font-bold text-slate-600">
+            Toplam {total || productList.length} sonuç gösteriliyor
           </span>
 
           {/* View Toggle */}
           <div className="flex items-center space-x-3">
-            <span className="text-xs font-bold text-slate-500">Views:</span>
+            <span className="text-xs font-bold text-slate-500">Görünüm:</span>
             <button
               onClick={() => setViewMode('grid')}
               className={`p-2 rounded-lg border transition ${
@@ -202,47 +172,79 @@ export default function ShopPage() {
             </button>
           </div>
 
-          {/* Filters & Sorting */}
-          <div className="flex items-center space-x-3 w-full md:w-auto">
+          {/* Filter Input & Sort Select Component */}
+          <form onSubmit={handleFilterSubmit} className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+            {/* Filter Input */}
             <div className="relative flex-grow md:flex-grow-0">
               <input
                 type="text"
-                placeholder="Search products..."
-                value={filterText}
-                onChange={(e) => setFilterText(e.target.value)}
-                className="w-full text-xs px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500"
+                placeholder="Filtrele (ör: siyah)..."
+                value={filterInput}
+                onChange={(e) => setFilterInput(e.target.value)}
+                className="w-full text-xs px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
+
+            {/* Sort Select Component */}
             <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="text-xs font-semibold px-3 py-2 border border-gray-200 rounded-lg bg-white focus:outline-none focus:border-indigo-500 text-slate-700"
+              value={sortState}
+              onChange={handleSortChange}
+              className="text-xs font-semibold px-3 py-2 border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-slate-700"
             >
-              <option value="popularity">Popularity</option>
-              <option value="price-asc">Price: Low to High</option>
-              <option value="price-desc">Price: High to Low</option>
-              <option value="rating">Rating</option>
+              <option value="">Sırala (Sort By)</option>
+              <option value="price:asc">Fiyat: Düşükten Yükseğe (price:asc)</option>
+              <option value="price:desc">Fiyat: Yüksekten Düşüğe (price:desc)</option>
+              <option value="rating:asc">Puan: Düşükten Yükseğe (rating:asc)</option>
+              <option value="rating:desc">Puan: Yüksekten Düşüğe (rating:desc)</option>
             </select>
-            <button className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-lg flex items-center gap-1.5 transition">
-              <Filter className="w-3.5 h-3.5" /> Filter
+
+            {/* Filter Submit Button */}
+            <button
+              type="submit"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-lg flex items-center gap-1.5 transition shadow-sm"
+            >
+              <FilterIcon className="w-3.5 h-3.5" /> Filtrele
             </button>
-          </div>
+          </form>
         </div>
       </div>
 
-      {/* Products Grid */}
+      {/* Products Grid & Loading state */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-8">
-        <div
-          className={
-            viewMode === 'grid'
-              ? 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'
-              : 'flex flex-col space-y-4'
-          }
-        >
-          {filteredProducts.map((p) => (
-            <ProductCard key={p.id} product={p} />
-          ))}
-        </div>
+        {fetchState === 'FETCHING' ? (
+          <div className="min-h-[400px] flex flex-col items-center justify-center">
+            <Loader2 className="w-10 h-10 animate-spin text-indigo-600 mb-3" />
+            <p className="text-sm font-medium text-slate-500">Ürünler yükleniyor...</p>
+          </div>
+        ) : productList.length === 0 ? (
+          <div className="min-h-[300px] flex flex-col items-center justify-center bg-white rounded-xl border border-gray-100 p-8 text-center">
+            <p className="text-base font-bold text-slate-700 mb-2">Aramanıza Uygun Ürün Bulunamadı</p>
+            <p className="text-xs text-slate-500 mb-4">Farklı bir filtre veya kategori deneyebilirsiniz.</p>
+            <button
+              onClick={() => {
+                setFilterInput('');
+                setFilterState('');
+                setSortState('');
+                navigate('/shop');
+              }}
+              className="text-xs font-bold text-indigo-600 hover:underline"
+            >
+              Filtreleri Temizle
+            </button>
+          </div>
+        ) : (
+          <div
+            className={
+              viewMode === 'grid'
+                ? 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'
+                : 'flex flex-col space-y-4'
+            }
+          >
+            {productList.map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Pagination */}
