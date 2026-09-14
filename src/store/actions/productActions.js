@@ -18,7 +18,7 @@ export const setLimit = (limit) => ({ type: SET_LIMIT, payload: limit });
 export const setOffset = (offset) => ({ type: SET_OFFSET, payload: offset });
 export const setFilter = (filter) => ({ type: SET_FILTER, payload: filter });
 
-// Thunk action creator to fetch categories
+// Thunk action creator to fetch categories (T12)
 export const fetchCategories = () => async (dispatch, getState) => {
   const { categories } = getState().product;
   if (categories && categories.length > 0) return;
@@ -31,7 +31,7 @@ export const fetchCategories = () => async (dispatch, getState) => {
   }
 };
 
-// Thunk action creator to fetch products with category, filter, sort parameters
+// Thunk action creator to fetch products (T13 & T15)
 export const fetchProducts = (params = {}) => async (dispatch) => {
   dispatch(setFetchState('FETCHING'));
   try {
@@ -39,20 +39,23 @@ export const fetchProducts = (params = {}) => async (dispatch) => {
     if (params.category) queryParams.append('category', params.category);
     if (params.filter) queryParams.append('filter', params.filter);
     if (params.sort) queryParams.append('sort', params.sort);
-    if (params.limit) queryParams.append('limit', params.limit);
-    if (params.offset) queryParams.append('offset', params.offset);
+    if (params.limit !== undefined) queryParams.append('limit', params.limit);
+    if (params.offset !== undefined) queryParams.append('offset', params.offset);
 
     const queryString = queryParams.toString();
     const endpoint = queryString ? `/products?${queryString}` : '/products';
 
     const res = await API.get(endpoint);
+    
+    // Handle response object shape: { total: 185, products: [...] }
     const productList = Array.isArray(res.data) ? res.data : (res.data.products || []);
     const total = res.data.total !== undefined ? res.data.total : productList.length;
 
+    // Set total and products to Product Reducer
     dispatch(setProductList(productList));
     dispatch(setTotal(total));
     dispatch(setFetchState('FETCHED'));
-    return { success: true, data: productList };
+    return { success: true, data: productList, total };
   } catch (error) {
     console.error('Fetch products error:', error);
     dispatch(setFetchState('FAILED'));
