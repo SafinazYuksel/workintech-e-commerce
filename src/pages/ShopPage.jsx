@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { LayoutGrid, List, ChevronRight, Filter as FilterIcon, Loader2 } from 'lucide-react';
+import { LayoutGrid, List, ChevronRight, Filter as FilterIcon, Loader2, ChevronLeft } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 import { fetchProducts, fetchCategories } from '../store/actions/productActions';
 
@@ -16,6 +16,10 @@ export default function ShopPage() {
   const fetchState = useSelector((state) => state.product.fetchState);
   const total = useSelector((state) => state.product.total);
 
+  const PAGE_LIMIT = 25;
+
+  const initialPage = parseInt(searchParams.get('page') || '1', 10);
+  const [activePage, setActivePage] = useState(initialPage);
   const [viewMode, setViewMode] = useState('grid');
   const [filterInput, setFilterInput] = useState(searchParams.get('filter') || '');
   const [filterState, setFilterState] = useState(searchParams.get('filter') || '');
@@ -26,20 +30,26 @@ export default function ShopPage() {
     dispatch(fetchCategories());
   }, [dispatch]);
 
-  // 2. Fetch products whenever categoryId, filterState, or sortState changes
+  // 2. Fetch products whenever categoryId, filterState, sortState, or activePage changes
   useEffect(() => {
-    const params = {};
+    const currentOffset = (activePage - 1) * PAGE_LIMIT;
+    const params = {
+      limit: PAGE_LIMIT,
+      offset: currentOffset
+    };
+
     if (categoryId) params.category = categoryId;
     if (filterState) params.filter = filterState;
     if (sortState) params.sort = sortState;
 
     dispatch(fetchProducts(params));
-  }, [categoryId, filterState, sortState, dispatch]);
+  }, [categoryId, filterState, sortState, activePage, dispatch]);
 
   // 3. Handle Filter submit
   const handleFilterSubmit = (e) => {
     if (e) e.preventDefault();
     setFilterState(filterInput);
+    setActivePage(1); // Reset to page 1 on new filter
 
     const newParams = new URLSearchParams(searchParams);
     if (filterInput) {
@@ -47,6 +57,7 @@ export default function ShopPage() {
     } else {
       newParams.delete('filter');
     }
+    newParams.set('page', '1');
     setSearchParams(newParams);
   };
 
@@ -54,6 +65,7 @@ export default function ShopPage() {
   const handleSortChange = (e) => {
     const value = e.target.value;
     setSortState(value);
+    setActivePage(1); // Reset to page 1 on new sort
 
     const newParams = new URLSearchParams(searchParams);
     if (value) {
@@ -61,19 +73,37 @@ export default function ShopPage() {
     } else {
       newParams.delete('sort');
     }
+    newParams.set('page', '1');
     setSearchParams(newParams);
   };
 
-  // 5. Handle Category selection (navigates to shop/:gender/:categoryName/:categoryId)
+  // 5. Handle Page change (T15 Pagination)
+  const handlePageChange = (newPage) => {
+    if (newPage < 1 || newPage > totalPages) return;
+    setActivePage(newPage);
+
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set('page', newPage.toString());
+    setSearchParams(newParams);
+
+    // Scroll smoothly to top of products grid
+    window.scrollTo({ top: 400, behavior: 'smooth' });
+  };
+
+  // 6. Handle Category selection
   const handleCategoryClick = (cat) => {
     const catGender = cat.gender === 'k' || cat.code?.startsWith('k:') ? 'kadin' : 'erkek';
     const slug = cat.title ? cat.title.toLowerCase().replace(/[^a-z0-9]+/g, '-') : 'kategori';
 
-    const searchString = searchParams.toString() ? `?${searchParams.toString()}` : '';
+    setActivePage(1);
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set('page', '1');
+    const searchString = newParams.toString() ? `?${newParams.toString()}` : '';
+
     navigate(`/shop/${catGender}/${slug}/${cat.id}${searchString}`);
   };
 
-  // T12 Requirement: Top 5 categories listed on screen with images regarding rating value
+  // Top 5 categories by rating
   const top5Categories = categories && categories.length > 0
     ? [...categories]
         .sort((a, b) => (b.rating || 0) - (a.rating || 0))
@@ -85,6 +115,10 @@ export default function ShopPage() {
         { id: 4, title: 'ERKEK AYAKKABI', code: 'e:ayakkabi', gender: 'e', rating: 4.6, img: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=500&q=80' },
         { id: 5, title: 'KADIN ELBİSE', code: 'k:elbise', gender: 'k', rating: 4.5, img: 'https://images.unsplash.com/photo-1539533018447-63fcce2678e3?auto=format&fit=crop&w=500&q=80' }
       ];
+
+  // Pagination calculation
+  const totalItems = total || productList.length;
+  const totalPages = Math.ceil(totalItems / PAGE_LIMIT) || 1;
 
   return (
     <div className="bg-slate-50 min-h-screen py-8">
@@ -144,7 +178,7 @@ export default function ShopPage() {
         <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
           {/* Total items result count */}
           <span className="text-xs font-bold text-slate-600">
-            Toplam {total || productList.length} sonuç gösteriliyor
+            Toplam {totalItems} sonuç gösteriliyor (Sayfa {activePage} / {totalPages})
           </span>
 
           {/* View Toggle */}
@@ -225,6 +259,7 @@ export default function ShopPage() {
                 setFilterInput('');
                 setFilterState('');
                 setSortState('');
+                setActivePage(1);
                 navigate('/shop');
               }}
               className="text-xs font-bold text-indigo-600 hover:underline"
@@ -247,26 +282,45 @@ export default function ShopPage() {
         )}
       </div>
 
-      {/* Pagination */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-12 flex justify-center">
-        <div className="inline-flex rounded-lg border border-gray-200 bg-white overflow-hidden shadow-sm text-xs font-bold">
-          <button className="px-4 py-2.5 text-slate-400 border-r border-gray-200 hover:bg-gray-50 transition">
-            First
-          </button>
-          <button className="px-4 py-2.5 bg-indigo-600 text-white border-r border-gray-200">
-            1
-          </button>
-          <button className="px-4 py-2.5 text-slate-600 hover:bg-gray-50 border-r border-gray-200 transition">
-            2
-          </button>
-          <button className="px-4 py-2.5 text-slate-600 hover:bg-gray-50 border-r border-gray-200 transition">
-            3
-          </button>
-          <button className="px-4 py-2.5 text-indigo-600 hover:bg-gray-50 transition">
-            Next
-          </button>
+      {/* T15 Pagination Component */}
+      {totalPages > 1 && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-12 flex justify-center">
+          <div className="inline-flex items-center rounded-lg border border-gray-200 bg-white overflow-hidden shadow-sm text-xs font-bold">
+            {/* Previous Button */}
+            <button
+              onClick={() => handlePageChange(activePage - 1)}
+              disabled={activePage === 1}
+              className="px-3.5 py-2.5 text-slate-600 border-r border-gray-200 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition flex items-center gap-1"
+            >
+              <ChevronLeft className="w-4 h-4" /> Önceki (Prev)
+            </button>
+
+            {/* Page Numbers */}
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+              <button
+                key={pageNum}
+                onClick={() => handlePageChange(pageNum)}
+                className={`px-4 py-2.5 border-r border-gray-200 transition ${
+                  activePage === pageNum
+                    ? 'bg-indigo-600 text-white font-extrabold'
+                    : 'text-slate-700 hover:bg-gray-50'
+                }`}
+              >
+                {pageNum}
+              </button>
+            ))}
+
+            {/* Next Button */}
+            <button
+              onClick={() => handlePageChange(activePage + 1)}
+              disabled={activePage === totalPages}
+              className="px-3.5 py-2.5 text-indigo-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition flex items-center gap-1"
+            >
+              Sonraki (Next) <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
