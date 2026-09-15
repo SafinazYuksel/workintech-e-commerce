@@ -9,6 +9,7 @@ import ShoppingCartPage from '../pages/ShoppingCartPage';
 import CreateOrderPage from '../pages/CreateOrderPage';
 import PreviousOrdersPage from '../pages/PreviousOrdersPage';
 import AboutPage from '../pages/AboutPage';
+import TeamPage from '../pages/TeamPage';
 import ProtectedRoute from '../components/ProtectedRoute';
 
 export default function PageContent() {
@@ -20,6 +21,7 @@ export default function PageContent() {
         <Route path="/shop/:gender/:categoryName/:categoryId" element={<ShopPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/about-us" element={<AboutPage />} />
+        <Route path="/team" element={<TeamPage />} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/cart" element={<ShoppingCartPage />} />

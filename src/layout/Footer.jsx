@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 export default function Footer() {
   return (
@@ -21,9 +22,9 @@ export default function Footer() {
         <div>
           <h3 className="text-sm font-bold text-white mb-4">Company Info</h3>
           <ul className="space-y-2.5 text-slate-400 text-xs">
-            <li><a href="#about" className="hover:text-white transition">About Us</a></li>
-            <li><a href="#carrier" className="hover:text-white transition">Carrier</a></li>
-            <li><a href="#hiring" className="hover:text-white transition">We are hiring</a></li>
+            <li><Link to="/about" className="hover:text-white transition">About Us</Link></li>
+            <li><Link to="/team" className="hover:text-white transition">Team</Link></li>
+            <li><Link to="/team" className="hover:text-white transition">We are hiring</Link></li>
             <li><a href="#blog" className="hover:text-white transition">Blog</a></li>
           </ul>
         </div>
