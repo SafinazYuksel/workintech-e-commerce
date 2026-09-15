@@ -13,15 +13,22 @@ import {
   CheckCircle2,
   ShieldCheck,
   ChevronRight,
-  Info
+  Info,
+  CreditCard as CardIcon,
+  Lock,
+  Check
 } from 'lucide-react';
 import {
   fetchAddressList,
   addAddress,
   updateAddress,
-  deleteAddress
+  deleteAddress,
+  fetchCreditCards,
+  addCreditCard,
+  updateCreditCard,
+  deleteCreditCard
 } from '../store/actions/clientActions';
-import { setAddress } from '../store/actions/shoppingCartActions';
+import { setAddress, setPayment, setCart } from '../store/actions/shoppingCartActions';
 import { toast } from 'react-toastify';
 
 const TURKISH_CITIES = [
@@ -40,6 +47,7 @@ export default function CreateOrderPage() {
   const navigate = useNavigate();
 
   const addressList = useSelector((state) => state.client.addressList) || [];
+  const creditCards = useSelector((state) => state.client.creditCards) || [];
   const cart = useSelector((state) => state.shoppingCart.cart) || [];
 
   const [activeStep, setActiveStep] = useState(1); // 1: Address, 2: Payment
@@ -49,15 +57,22 @@ export default function CreateOrderPage() {
   const [agreedTerms, setAgreedTerms] = useState(false);
 
   // Address Modal State
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState(null);
 
+  // Credit Card State (T21)
+  const [selectedCardId, setSelectedCardId] = useState(null);
+  const [use3DSecure, setUse3DSecure] = useState(true);
+  const [isCardModalOpen, setIsCardModalOpen] = useState(false);
+  const [editingCard, setEditingCard] = useState(null);
+  const [showNewCardForm, setShowNewCardForm] = useState(false);
+
+  // Address Form Hook
   const {
-    register,
-    handleSubmit,
-    reset,
-    setValue,
-    formState: { errors, isSubmitting }
+    register: registerAddress,
+    handleSubmit: handleSubmitAddress,
+    reset: resetAddress,
+    formState: { errors: addressErrors, isSubmitting: isAddressSubmitting }
   } = useForm({
     defaultValues: {
       title: '',
@@ -70,17 +85,41 @@ export default function CreateOrderPage() {
     }
   });
 
+  // Card Form Hook
+  const {
+    register: registerCard,
+    handleSubmit: handleSubmitCard,
+    reset: resetCard,
+    formState: { errors: cardErrors, isSubmitting: isCardSubmitting }
+  } = useForm({
+    defaultValues: {
+      card_no: '',
+      expire_month: 12,
+      expire_year: 2028,
+      name_on_card: '',
+      cvv: ''
+    }
+  });
+
   useEffect(() => {
     dispatch(fetchAddressList());
+    dispatch(fetchCreditCards());
   }, [dispatch]);
 
-  // Set default selected address when addressList loads
+  // Set default selected address
   useEffect(() => {
     if (addressList.length > 0 && !selectedShippingId) {
       setSelectedShippingId(addressList[0].id);
       setSelectedBillingId(addressList[0].id);
     }
   }, [addressList, selectedShippingId]);
+
+  // Set default selected card
+  useEffect(() => {
+    if (creditCards.length > 0 && !selectedCardId) {
+      setSelectedCardId(creditCards[0].id);
+    }
+  }, [creditCards, selectedCardId]);
 
   // Price calculations for Order Summary
   const checkedItems = cart.filter((item) => item.checked !== false);
@@ -93,9 +132,10 @@ export default function CreateOrderPage() {
   const shippingDiscount = productsSubtotal >= 150 ? 29.99 : 0;
   const grandTotal = Math.max(0, productsSubtotal + shippingPrice - shippingDiscount);
 
-  const handleOpenAddModal = () => {
+  // Address Handlers
+  const handleOpenAddAddressModal = () => {
     setEditingAddress(null);
-    reset({
+    resetAddress({
       title: '',
       name: '',
       surname: '',
@@ -104,13 +144,13 @@ export default function CreateOrderPage() {
       district: '',
       neighborhood: ''
     });
-    setIsModalOpen(true);
+    setIsAddressModalOpen(true);
   };
 
-  const handleOpenEditModal = (addr, e) => {
+  const handleOpenEditAddressModal = (addr, e) => {
     e.stopPropagation();
     setEditingAddress(addr);
-    reset({
+    resetAddress({
       title: addr.title || '',
       name: addr.name || '',
       surname: addr.surname || '',
@@ -119,10 +159,10 @@ export default function CreateOrderPage() {
       district: addr.district || '',
       neighborhood: addr.neighborhood || ''
     });
-    setIsModalOpen(true);
+    setIsAddressModalOpen(true);
   };
 
-  const handleDelete = async (addressId, e) => {
+  const handleDeleteAddress = async (addressId, e) => {
     e.stopPropagation();
     if (window.confirm('Bu adresi silmek istediğinize emin misiniz?')) {
       await dispatch(deleteAddress(addressId));
@@ -152,12 +192,72 @@ export default function CreateOrderPage() {
     }
 
     if (result.success) {
-      setIsModalOpen(false);
-      reset();
+      setIsAddressModalOpen(false);
+      resetAddress();
     }
   };
 
-  const handleSaveAndContinue = () => {
+  // Card Handlers (T21)
+  const handleOpenAddCardModal = () => {
+    setEditingCard(null);
+    resetCard({
+      card_no: '',
+      expire_month: 12,
+      expire_year: 2028,
+      name_on_card: '',
+      cvv: ''
+    });
+    setIsCardModalOpen(true);
+  };
+
+  const handleOpenEditCardModal = (card, e) => {
+    e.stopPropagation();
+    setEditingCard(card);
+    resetCard({
+      card_no: card.card_no || '',
+      expire_month: card.expire_month || 12,
+      expire_year: card.expire_year || 2028,
+      name_on_card: card.name_on_card || '',
+      cvv: '123'
+    });
+    setIsCardModalOpen(true);
+  };
+
+  const handleDeleteCard = async (cardId, e) => {
+    e.stopPropagation();
+    if (window.confirm('Bu kartı silmek istediğinize emin misiniz?')) {
+      await dispatch(deleteCreditCard(cardId));
+      if (selectedCardId === cardId) {
+        setSelectedCardId(null);
+      }
+    }
+  };
+
+  const onSubmitCard = async (data) => {
+    const cleanCardNo = data.card_no.replace(/\s+/g, '');
+    const payload = {
+      card_no: cleanCardNo,
+      expire_month: Number(data.expire_month),
+      expire_year: Number(data.expire_year),
+      name_on_card: data.name_on_card
+    };
+
+    let result;
+    if (editingCard) {
+      payload.id = editingCard.id;
+      result = await dispatch(updateCreditCard(payload));
+    } else {
+      result = await dispatch(addCreditCard(payload));
+    }
+
+    if (result.success) {
+      setIsCardModalOpen(false);
+      setShowNewCardForm(false);
+      resetCard();
+    }
+  };
+
+  const handleSaveAndContinueAddress = () => {
     if (!selectedShippingId) {
       toast.warning('Lütfen devam etmek için bir teslimat adresi seçiniz.');
       return;
@@ -165,8 +265,36 @@ export default function CreateOrderPage() {
 
     const selectedAddr = addressList.find((a) => a.id === selectedShippingId);
     dispatch(setAddress(selectedAddr));
-    toast.success('Adres bilgisi kaydedildi. Ödeme adımına geçiliyor.');
+    toast.success('Adres bilginiz kaydedildi. Ödeme adımına geçiliyor.');
     setActiveStep(2);
+  };
+
+  const handleCompletePayment = () => {
+    if (!agreedTerms) {
+      toast.warning('Lütfen devam etmeden önce Mesafeli Satış Sözleşmesi ve Ön Bilgilendirme Koşullarını onaylayınız.');
+      return;
+    }
+
+    if (!selectedCardId && creditCards.length > 0) {
+      toast.warning('Lütfen ödeme yapmak için bir kart seçiniz.');
+      return;
+    }
+
+    const selectedCard = creditCards.find((c) => c.id === selectedCardId);
+    dispatch(setPayment({ card: selectedCard, use3DSecure }));
+
+    toast.success('🎉 Siparişiniz başarıyla tamamlandı ve oluşturuldu!');
+    dispatch(setCart([]));
+    navigate('/');
+  };
+
+  const formatCardNumber = (cardNo) => {
+    if (!cardNo) return '**** **** **** ****';
+    const str = String(cardNo).replace(/\s+/g, '');
+    if (str.length >= 16) {
+      return `${str.slice(0, 4)} ${str.slice(4, 6)}** **** ${str.slice(12)}`;
+    }
+    return str;
   };
 
   return (
@@ -230,9 +358,10 @@ export default function CreateOrderPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-        {/* Left Column: Address Information & Selection (2 Cols) */}
+        {/* Left 2 Columns */}
         <div className="lg:col-span-2 space-y-6">
           {activeStep === 1 ? (
+            /* STEP 1: ADDRESS INFORMATION */
             <>
               {/* Notice Banner */}
               <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3 text-xs text-amber-800">
@@ -261,7 +390,7 @@ export default function CreateOrderPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Add New Address Card */}
                   <div
-                    onClick={handleOpenAddModal}
+                    onClick={handleOpenAddAddressModal}
                     className="border-2 border-dashed border-gray-200 hover:border-orange-500 bg-slate-50/50 hover:bg-orange-50/30 rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer min-h-[160px] transition text-center group"
                   >
                     <div className="w-10 h-10 rounded-full bg-white group-hover:bg-orange-500 group-hover:text-white text-orange-600 flex items-center justify-center mb-2 shadow-sm transition">
@@ -286,7 +415,6 @@ export default function CreateOrderPage() {
                         }`}
                       >
                         <div>
-                          {/* Card Top Row */}
                           <div className="flex items-center justify-between mb-2">
                             <label className="flex items-center gap-2 font-bold text-xs text-slate-900 cursor-pointer">
                               <input
@@ -301,14 +429,14 @@ export default function CreateOrderPage() {
 
                             <div className="flex items-center gap-1">
                               <button
-                                onClick={(e) => handleOpenEditModal(addr, e)}
+                                onClick={(e) => handleOpenEditAddressModal(addr, e)}
                                 className="p-1 text-slate-400 hover:text-orange-600 transition text-xs flex items-center gap-1 font-semibold"
                                 title="Düzenle"
                               >
                                 <Edit2 className="w-3.5 h-3.5" /> Düzenle
                               </button>
                               <button
-                                onClick={(e) => handleDelete(addr.id, e)}
+                                onClick={(e) => handleDeleteAddress(addr.id, e)}
                                 className="p-1 text-slate-400 hover:text-red-600 transition"
                                 title="Sil"
                               >
@@ -317,7 +445,6 @@ export default function CreateOrderPage() {
                             </div>
                           </div>
 
-                          {/* Address Details */}
                           <div className="space-y-1 text-xs text-slate-600 pl-6">
                             <p className="font-semibold text-slate-800 flex items-center gap-1">
                               <User className="w-3.5 h-3.5 text-slate-400" /> {addr.name} {addr.surname}
@@ -338,66 +465,164 @@ export default function CreateOrderPage() {
                   })}
                 </div>
               </div>
-
-              {/* Billing Address Section (If not same) */}
-              {!useSameAddressForBilling && (
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-4">
-                  <h2 className="text-lg font-bold text-slate-900 border-b border-gray-100 pb-4">
-                    Fatura Adresi
-                  </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {addressList.map((addr) => {
-                      const isSelected = selectedBillingId === addr.id;
-                      return (
-                        <div
-                          key={addr.id}
-                          onClick={() => setSelectedBillingId(addr.id)}
-                          className={`border rounded-xl p-4 cursor-pointer transition relative flex flex-col justify-between min-h-[140px] ${
-                            isSelected
-                              ? 'border-orange-500 bg-orange-50/20 ring-2 ring-orange-100 shadow-sm'
-                              : 'border-gray-200 hover:border-gray-300 bg-white'
-                          }`}
-                        >
-                          <div className="flex items-center justify-between mb-2">
-                            <label className="flex items-center gap-2 font-bold text-xs text-slate-900 cursor-pointer">
-                              <input
-                                type="radio"
-                                name="billingAddress"
-                                checked={isSelected}
-                                onChange={() => setSelectedBillingId(addr.id)}
-                                className="w-4 h-4 text-orange-600 focus:ring-orange-500 cursor-pointer"
-                              />
-                              <span>{addr.title}</span>
-                            </label>
-                          </div>
-                          <div className="space-y-1 text-xs text-slate-600 pl-6">
-                            <p className="font-semibold text-slate-800">{addr.name} {addr.surname}</p>
-                            <p>{addr.neighborhood}, {addr.district} / {addr.city}</p>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
             </>
           ) : (
-            /* Step 2 Placeholder / Payment Section */
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center space-y-4">
-              <div className="w-16 h-16 bg-orange-50 text-orange-600 rounded-full flex items-center justify-center mx-auto">
-                <CheckCircle2 className="w-8 h-8" />
-              </div>
-              <h2 className="text-xl font-bold text-slate-900">Adres Bilgileri Onaylandı</h2>
-              <p className="text-sm text-slate-500 max-w-md mx-auto">
-                Seçilen Adres: <strong>{addressList.find((a) => a.id === selectedShippingId)?.title}</strong> ({addressList.find((a) => a.id === selectedShippingId)?.city})
-              </p>
-              <div className="pt-4">
+            /* STEP 2: CREDIT CARD PAYMENT (T21) */
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-6">
+              {/* Header Radio & Subtitle */}
+              <div className="border-b border-gray-100 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                  <div className="flex items-center gap-2 font-bold text-lg text-slate-900">
+                    <input type="radio" checked readOnly className="w-4 h-4 text-orange-600" />
+                    <span>Kart ile Öde</span>
+                  </div>
+                  <p className="text-xs text-slate-500 mt-1 pl-6">
+                    Kart ile ödemeyi seçtiniz. Banka veya Kredi Kartı kullanarak ödemenizi güvenle yapabilirsiniz.
+                  </p>
+                </div>
+
                 <button
-                  onClick={() => setActiveStep(1)}
-                  className="px-4 py-2 border border-gray-300 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                  type="button"
+                  onClick={handleOpenAddCardModal}
+                  className="text-xs font-bold text-orange-600 hover:text-orange-700 underline flex items-center gap-1 self-start sm:self-auto"
                 >
-                  Adresi Değiştir
+                  <Plus className="w-4 h-4" /> Başka bir Kart ile Ödeme Yap / Yeni Kart Ekle
                 </button>
+              </div>
+
+              {/* Cards Grid & Form Layout */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Saved Credit Cards Column */}
+                <div className="space-y-4">
+                  <h3 className="text-xs font-extrabold text-slate-700 uppercase tracking-wider">
+                    Kart Bilgileri (Kayıtlı Kartlarım)
+                  </h3>
+
+                  {creditCards.length === 0 ? (
+                    <div className="p-6 border border-dashed border-gray-200 rounded-xl text-center space-y-3">
+                      <CardIcon className="w-8 h-8 text-slate-400 mx-auto" />
+                      <p className="text-xs text-slate-500">Kayıtlı kartınız bulunmuyor.</p>
+                      <button
+                        onClick={handleOpenAddCardModal}
+                        className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs rounded-xl transition shadow-sm"
+                      >
+                        + Kart Ekle
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-3 max-h-96 overflow-y-auto pr-1">
+                      {creditCards.map((card) => {
+                        const isSelected = selectedCardId === card.id;
+                        return (
+                          <div
+                            key={card.id}
+                            onClick={() => setSelectedCardId(card.id)}
+                            className={`border rounded-xl p-4 cursor-pointer transition relative ${
+                              isSelected
+                                ? 'border-orange-500 bg-orange-50/20 ring-2 ring-orange-100 shadow-sm'
+                                : 'border-gray-200 hover:border-gray-300 bg-white'
+                            }`}
+                          >
+                            <div className="flex items-start justify-between">
+                              <label className="flex items-center gap-2 font-bold text-xs text-slate-900 cursor-pointer">
+                                <input
+                                  type="radio"
+                                  name="creditCardSelect"
+                                  checked={isSelected}
+                                  onChange={() => setSelectedCardId(card.id)}
+                                  className="w-4 h-4 text-orange-600 focus:ring-orange-500 cursor-pointer"
+                                />
+                                <span>{card.name_on_card || 'Kredi Kartı'}</span>
+                              </label>
+
+                              <div className="flex items-center gap-1">
+                                <button
+                                  onClick={(e) => handleOpenEditCardModal(card, e)}
+                                  className="p-1 text-slate-400 hover:text-orange-600 transition"
+                                  title="Düzenle"
+                                >
+                                  <Edit2 className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  onClick={(e) => handleDeleteCard(card.id, e)}
+                                  className="p-1 text-slate-400 hover:text-red-600 transition"
+                                  title="Sil"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            </div>
+
+                            {/* Card Display Mockup */}
+                            <div className="mt-3 bg-gradient-to-r from-slate-800 to-slate-900 text-white rounded-lg p-3 space-y-2 text-xs shadow">
+                              <div className="flex justify-between items-center text-[10px] text-slate-400 uppercase tracking-widest font-mono">
+                                <span>CREDIT CARD</span>
+                                <CardIcon className="w-4 h-4 text-amber-400" />
+                              </div>
+                              <p className="font-mono text-sm tracking-wider font-semibold">
+                                {formatCardNumber(card.card_no)}
+                              </p>
+                              <div className="flex justify-between items-end text-[10px] text-slate-300">
+                                <div>
+                                  <span className="block text-[8px] text-slate-400">KART SAHİBİ</span>
+                                  <span className="font-bold uppercase">{card.name_on_card}</span>
+                                </div>
+                                <div>
+                                  <span className="block text-[8px] text-slate-400">SKT</span>
+                                  <span className="font-mono font-bold">{card.expire_month}/{card.expire_year}</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+
+                {/* Installment Options Column (Taksit Seçenekleri) */}
+                <div className="space-y-4">
+                  <h3 className="text-xs font-extrabold text-slate-700 uppercase tracking-wider">
+                    Taksit Seçenekleri
+                  </h3>
+                  <p className="text-xs text-slate-500">Kartınıza uygun taksit seçeneğini seçiniz</p>
+
+                  <div className="border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+                    <table className="w-full text-left text-xs border-collapse">
+                      <thead>
+                        <tr className="bg-slate-50 text-slate-600 font-bold border-b border-gray-200">
+                          <th className="py-2.5 px-3">Taksit Sayısı</th>
+                          <th className="py-2.5 px-3 text-right">Aylık Ödeme</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr className="border-b border-gray-100 bg-orange-50/30">
+                          <td className="py-3 px-3 font-bold text-slate-900 flex items-center gap-2">
+                            <input type="radio" checked readOnly className="w-4 h-4 text-orange-600" />
+                            Tek Çekim
+                          </td>
+                          <td className="py-3 px-3 text-right font-black text-orange-600">
+                            ₺{grandTotal.toLocaleString('tr-TR', { minimumFractionDigits: 2 })}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              {/* 3D Secure Checkbox */}
+              <div className="border-t border-gray-100 pt-4">
+                <label className="flex items-center gap-2.5 cursor-pointer text-xs font-bold text-slate-800">
+                  <input
+                    type="checkbox"
+                    checked={use3DSecure}
+                    onChange={(e) => setUse3DSecure(e.target.checked)}
+                    className="w-4 h-4 text-orange-600 rounded border-gray-300 focus:ring-orange-500 cursor-pointer"
+                  />
+                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                  <span>3D Secure ile ödemek istiyorum</span>
+                </label>
               </div>
             </div>
           )}
@@ -405,18 +630,32 @@ export default function CreateOrderPage() {
 
         {/* Right Column: Order Summary Card (1 Col) */}
         <div className="lg:col-span-1 space-y-4">
-          {/* Top Save & Continue Button */}
-          <button
-            onClick={handleSaveAndContinue}
-            disabled={!selectedShippingId}
-            className={`w-full py-3.5 px-6 rounded-xl font-bold text-white text-center text-base shadow-md transition duration-200 flex items-center justify-center gap-2 ${
-              selectedShippingId
-                ? 'bg-orange-500 hover:bg-orange-600 shadow-orange-100 cursor-pointer'
-                : 'bg-gray-300 cursor-not-allowed shadow-none'
-            }`}
-          >
-            Kaydet ve Devam Et <ChevronRight className="w-5 h-5" />
-          </button>
+          {/* Top Primary Action Button */}
+          {activeStep === 1 ? (
+            <button
+              onClick={handleSaveAndContinueAddress}
+              disabled={!selectedShippingId}
+              className={`w-full py-3.5 px-6 rounded-xl font-bold text-white text-center text-base shadow-md transition duration-200 flex items-center justify-center gap-2 ${
+                selectedShippingId
+                  ? 'bg-orange-500 hover:bg-orange-600 shadow-orange-100 cursor-pointer'
+                  : 'bg-gray-300 cursor-not-allowed shadow-none'
+              }`}
+            >
+              Kaydet ve Devam Et <ChevronRight className="w-5 h-5" />
+            </button>
+          ) : (
+            <button
+              onClick={handleCompletePayment}
+              disabled={!agreedTerms || (creditCards.length === 0 && !selectedCardId)}
+              className={`w-full py-3.5 px-6 rounded-xl font-bold text-white text-center text-base shadow-md transition duration-200 flex items-center justify-center gap-2 ${
+                agreedTerms && (selectedCardId || creditCards.length > 0)
+                  ? 'bg-orange-500 hover:bg-orange-600 shadow-orange-100 cursor-pointer'
+                  : 'bg-gray-300 cursor-not-allowed shadow-none'
+              }`}
+            >
+              Ödeme Yap <Lock className="w-4 h-4" />
+            </button>
+          )}
 
           {/* Terms Agreement Checkbox */}
           <div className="bg-white rounded-xl border border-gray-100 p-4">
@@ -470,18 +709,32 @@ export default function CreateOrderPage() {
             </div>
           </div>
 
-          {/* Bottom Save & Continue Button */}
-          <button
-            onClick={handleSaveAndContinue}
-            disabled={!selectedShippingId}
-            className={`w-full py-3.5 px-6 rounded-xl font-bold text-white text-center text-base shadow-md transition duration-200 flex items-center justify-center gap-2 ${
-              selectedShippingId
-                ? 'bg-orange-500 hover:bg-orange-600 shadow-orange-100 cursor-pointer'
-                : 'bg-gray-300 cursor-not-allowed shadow-none'
-            }`}
-          >
-            Kaydet ve Devam Et <ChevronRight className="w-5 h-5" />
-          </button>
+          {/* Bottom Action Button */}
+          {activeStep === 1 ? (
+            <button
+              onClick={handleSaveAndContinueAddress}
+              disabled={!selectedShippingId}
+              className={`w-full py-3.5 px-6 rounded-xl font-bold text-white text-center text-base shadow-md transition duration-200 flex items-center justify-center gap-2 ${
+                selectedShippingId
+                  ? 'bg-orange-500 hover:bg-orange-600 shadow-orange-100 cursor-pointer'
+                  : 'bg-gray-300 cursor-not-allowed shadow-none'
+              }`}
+            >
+              Kaydet ve Devam Et <ChevronRight className="w-5 h-5" />
+            </button>
+          ) : (
+            <button
+              onClick={handleCompletePayment}
+              disabled={!agreedTerms || (creditCards.length === 0 && !selectedCardId)}
+              className={`w-full py-3.5 px-6 rounded-xl font-bold text-white text-center text-base shadow-md transition duration-200 flex items-center justify-center gap-2 ${
+                agreedTerms && (selectedCardId || creditCards.length > 0)
+                  ? 'bg-orange-500 hover:bg-orange-600 shadow-orange-100 cursor-pointer'
+                  : 'bg-gray-300 cursor-not-allowed shadow-none'
+              }`}
+            >
+              Ödeme Yap <Lock className="w-4 h-4" />
+            </button>
+          )}
 
           <div className="flex items-center gap-2 text-xs text-slate-400 justify-center pt-1">
             <ShieldCheck className="w-4 h-4 text-emerald-500" />
@@ -491,11 +744,11 @@ export default function CreateOrderPage() {
       </div>
 
       {/* Address Form Modal */}
-      {isModalOpen && (
+      {isAddressModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4 overflow-y-auto">
           <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 relative my-8 animate-fadeIn">
             <button
-              onClick={() => setIsModalOpen(false)}
+              onClick={() => setIsAddressModalOpen(false)}
               className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1"
             >
               <X className="w-5 h-5" />
@@ -505,8 +758,7 @@ export default function CreateOrderPage() {
               {editingAddress ? 'Adresi Düzenle' : 'Yeni Adres Ekle'}
             </h3>
 
-            <form onSubmit={handleSubmit(onSubmitAddress)} className="space-y-4">
-              {/* Title */}
+            <form onSubmit={handleSubmitAddress(onSubmitAddress)} className="space-y-4">
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">
                   Adres Başlığı (Address Title) *
@@ -514,54 +766,51 @@ export default function CreateOrderPage() {
                 <input
                   type="text"
                   placeholder="örn: Ev adresi, İş adresi"
-                  {...register('title', { required: 'Adres başlığı zorunludur.' })}
+                  {...registerAddress('title', { required: 'Adres başlığı zorunludur.' })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-1 focus:ring-orange-500 focus:outline-none"
                 />
-                {errors.title && <p className="text-xs text-red-500 mt-0.5">{errors.title.message}</p>}
+                {addressErrors.title && <p className="text-xs text-red-500 mt-0.5">{addressErrors.title.message}</p>}
               </div>
 
-              {/* Name & Surname */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">Ad (Name) *</label>
                   <input
                     type="text"
                     placeholder="Alişan"
-                    {...register('name', { required: 'Ad zorunludur.' })}
+                    {...registerAddress('name', { required: 'Ad zorunludur.' })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-1 focus:ring-orange-500 focus:outline-none"
                   />
-                  {errors.name && <p className="text-xs text-red-500 mt-0.5">{errors.name.message}</p>}
+                  {addressErrors.name && <p className="text-xs text-red-500 mt-0.5">{addressErrors.name.message}</p>}
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">Soyad (Surname) *</label>
                   <input
                     type="text"
                     placeholder="Karababa"
-                    {...register('surname', { required: 'Soyad zorunludur.' })}
+                    {...registerAddress('surname', { required: 'Soyad zorunludur.' })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-1 focus:ring-orange-500 focus:outline-none"
                   />
-                  {errors.surname && <p className="text-xs text-red-500 mt-0.5">{errors.surname.message}</p>}
+                  {addressErrors.surname && <p className="text-xs text-red-500 mt-0.5">{addressErrors.surname.message}</p>}
                 </div>
               </div>
 
-              {/* Phone */}
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">Telefon (Phone) *</label>
                 <input
                   type="tel"
                   placeholder="05376845834"
-                  {...register('phone', { required: 'Telefon numarası zorunludur.' })}
+                  {...registerAddress('phone', { required: 'Telefon numarası zorunludur.' })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-1 focus:ring-orange-500 focus:outline-none"
                 />
-                {errors.phone && <p className="text-xs text-red-500 mt-0.5">{errors.phone.message}</p>}
+                {addressErrors.phone && <p className="text-xs text-red-500 mt-0.5">{addressErrors.phone.message}</p>}
               </div>
 
-              {/* City & District */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">İl (City) *</label>
                   <select
-                    {...register('city', { required: 'İl seçimi zorunludur.' })}
+                    {...registerAddress('city', { required: 'İl seçimi zorunludur.' })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-1 focus:ring-orange-500 focus:outline-none bg-white"
                   >
                     {TURKISH_CITIES.map((c) => (
@@ -576,14 +825,13 @@ export default function CreateOrderPage() {
                   <input
                     type="text"
                     placeholder="Esenler"
-                    {...register('district', { required: 'İlçe zorunludur.' })}
+                    {...registerAddress('district', { required: 'İlçe zorunludur.' })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-1 focus:ring-orange-500 focus:outline-none"
                   />
-                  {errors.district && <p className="text-xs text-red-500 mt-0.5">{errors.district.message}</p>}
+                  {addressErrors.district && <p className="text-xs text-red-500 mt-0.5">{addressErrors.district.message}</p>}
                 </div>
               </div>
 
-              {/* Neighborhood / Address Detail */}
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">
                   Mahalle & Adres Detayı (Neighborhood) *
@@ -591,27 +839,128 @@ export default function CreateOrderPage() {
                 <textarea
                   rows={3}
                   placeholder="Mahalle, sokak, bina no ve daire detayları..."
-                  {...register('neighborhood', { required: 'Adres detayı zorunludur.' })}
+                  {...registerAddress('neighborhood', { required: 'Adres detayı zorunludur.' })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-1 focus:ring-orange-500 focus:outline-none"
                 />
-                {errors.neighborhood && <p className="text-xs text-red-500 mt-0.5">{errors.neighborhood.message}</p>}
+                {addressErrors.neighborhood && <p className="text-xs text-red-500 mt-0.5">{addressErrors.neighborhood.message}</p>}
               </div>
 
-              {/* Submit Action */}
               <div className="pt-2 flex justify-end gap-3 border-t border-gray-100 mt-4">
                 <button
                   type="button"
-                  onClick={() => setIsModalOpen(false)}
+                  onClick={() => setIsAddressModalOpen(false)}
                   className="px-4 py-2 border border-gray-300 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 transition"
                 >
                   İptal
                 </button>
                 <button
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={isAddressSubmitting}
                   className="px-5 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl text-xs font-bold transition shadow-sm disabled:opacity-50"
                 >
-                  {isSubmitting ? 'Kaydediliyor...' : 'Kaydet'}
+                  {isAddressSubmitting ? 'Kaydediliyor...' : 'Kaydet'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Credit Card Form Modal (T21) */}
+      {isCardModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 relative my-8 animate-fadeIn">
+            <button
+              onClick={() => setIsCardModalOpen(false)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <h3 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+              <CardIcon className="w-5 h-5 text-orange-500" />
+              {editingCard ? 'Kredi Kartını Düzenle' : 'Yeni Kredi Kartı Ekle'}
+            </h3>
+
+            <form onSubmit={handleSubmitCard(onSubmitCard)} className="space-y-4">
+              {/* Card Number */}
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  Kart Numarası (Card Number) *
+                </label>
+                <input
+                  type="text"
+                  placeholder="1234 1234 1234 1234"
+                  maxLength={19}
+                  {...registerCard('card_no', {
+                    required: 'Kart numarası zorunludur.',
+                    minLength: { value: 15, message: 'Geçerli bir kart numarası giriniz.' }
+                  })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm font-mono focus:ring-1 focus:ring-orange-500 focus:outline-none"
+                />
+                {cardErrors.card_no && <p className="text-xs text-red-500 mt-0.5">{cardErrors.card_no.message}</p>}
+              </div>
+
+              {/* Name on Card */}
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  Kart Üzerindeki İsim (Name on Card) *
+                </label>
+                <input
+                  type="text"
+                  placeholder="Ali Baş"
+                  {...registerCard('name_on_card', { required: 'Kart üzerindeki isim zorunludur.' })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm uppercase focus:ring-1 focus:ring-orange-500 focus:outline-none"
+                />
+                {cardErrors.name_on_card && <p className="text-xs text-red-500 mt-0.5">{cardErrors.name_on_card.message}</p>}
+              </div>
+
+              {/* Expire Month & Year */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Son Kullanma Ay *</label>
+                  <select
+                    {...registerCard('expire_month', { required: true })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-1 focus:ring-orange-500 focus:outline-none bg-white"
+                  >
+                    {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
+                      <option key={m} value={m}>
+                        {m < 10 ? `0${m}` : m}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Son Kullanma Yıl *</label>
+                  <select
+                    {...registerCard('expire_year', { required: true })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-1 focus:ring-orange-500 focus:outline-none bg-white"
+                  >
+                    {Array.from({ length: 12 }, (_, i) => 2024 + i).map((y) => (
+                      <option key={y} value={y}>
+                        {y}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Submit Button */}
+              <div className="pt-2 flex justify-end gap-3 border-t border-gray-100 mt-4">
+                <button
+                  type="button"
+                  onClick={() => setIsCardModalOpen(false)}
+                  className="px-4 py-2 border border-gray-300 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 transition"
+                >
+                  İptal
+                </button>
+                <button
+                  type="submit"
+                  disabled={isCardSubmitting}
+                  className="px-5 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl text-xs font-bold transition shadow-sm disabled:opacity-50"
+                >
+                  {isCardSubmitting ? 'Kaydediliyor...' : 'Kartı Kaydet'}
                 </button>
               </div>
             </form>
