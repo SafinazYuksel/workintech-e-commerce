@@ -148,7 +148,7 @@ export default function Header() {
           <Link to="/about" className="hover:text-indigo-600 transition">
             About
           </Link>
-          <Link to="/" className="hover:text-indigo-600 transition">
+          <Link to="/contact" className="hover:text-indigo-600 transition">
             Contact
           </Link>
         </nav>
