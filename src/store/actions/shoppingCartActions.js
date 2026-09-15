@@ -1,3 +1,6 @@
+import { API } from '../../api/axiosInstance';
+import { toast } from 'react-toastify';
+
 export const SET_CART = 'SET_CART';
 export const ADD_TO_CART = 'ADD_TO_CART';
 export const UPDATE_CART_ITEM_COUNT = 'UPDATE_CART_ITEM_COUNT';
@@ -27,4 +30,22 @@ export const toggleSelectAll = (checked) => ({
 });
 export const setPayment = (payment) => ({ type: SET_PAYMENT, payload: payment });
 export const setAddress = (address) => ({ type: SET_ADDRESS, payload: address });
+
+// Create Order Thunk (T22)
+export const createOrder = (orderPayload) => async (dispatch) => {
+  try {
+    const res = await API.post('/order', orderPayload);
+    toast.success('🎉 Siparişiniz başarıyla alındı!');
+    // Reset cart and checkout states
+    dispatch(setCart([]));
+    dispatch(setAddress({}));
+    dispatch(setPayment({}));
+    return { success: true, data: res.data };
+  } catch (error) {
+    console.error('Create order API error:', error);
+    const msg = error.response?.data?.message || 'Sipariş oluşturulurken bir hata oluştu.';
+    toast.error(msg);
+    return { success: false, error: msg };
+  }
+};
 

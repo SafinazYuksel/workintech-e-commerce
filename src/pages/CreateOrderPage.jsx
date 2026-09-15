@@ -28,7 +28,7 @@ import {
   updateCreditCard,
   deleteCreditCard
 } from '../store/actions/clientActions';
-import { setAddress, setPayment, setCart } from '../store/actions/shoppingCartActions';
+import { setAddress, setPayment, setCart, createOrder } from '../store/actions/shoppingCartActions';
 import { toast } from 'react-toastify';
 
 const TURKISH_CITIES = [
@@ -66,6 +66,11 @@ export default function CreateOrderPage() {
   const [isCardModalOpen, setIsCardModalOpen] = useState(false);
   const [editingCard, setEditingCard] = useState(null);
   const [showNewCardForm, setShowNewCardForm] = useState(false);
+
+  // Order Success State (T22)
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [createdOrderData, setCreatedOrderData] = useState(null);
+  const [isOrderSubmitting, setIsOrderSubmitting] = useState(false);
 
   // Address Form Hook
   const {
@@ -269,23 +274,53 @@ export default function CreateOrderPage() {
     setActiveStep(2);
   };
 
-  const handleCompletePayment = () => {
+  const handleCompletePayment = async () => {
     if (!agreedTerms) {
       toast.warning('Lütfen devam etmeden önce Mesafeli Satış Sözleşmesi ve Ön Bilgilendirme Koşullarını onaylayınız.');
       return;
     }
 
-    if (!selectedCardId && creditCards.length > 0) {
-      toast.warning('Lütfen ödeme yapmak için bir kart seçiniz.');
+    if (!selectedShippingId) {
+      toast.warning('Lütfen bir teslimat adresi seçiniz.');
       return;
     }
 
     const selectedCard = creditCards.find((c) => c.id === selectedCardId);
-    dispatch(setPayment({ card: selectedCard, use3DSecure }));
+    if (!selectedCard && creditCards.length > 0) {
+      toast.warning('Lütfen ödeme yapmak için bir kart seçiniz.');
+      return;
+    }
 
-    toast.success('🎉 Siparişiniz başarıyla tamamlandı ve oluşturuldu!');
-    dispatch(setCart([]));
-    navigate('/');
+    setIsOrderSubmitting(true);
+
+    const cleanCardNo = Number(String(selectedCard?.card_no || '1234123412341234').replace(/\D/g, '')) || 1234123412341234;
+    const nowIso = new Date().toISOString().slice(0, 19);
+
+    const orderProducts = checkedItems.map((item) => ({
+      product_id: Number(item.product.id),
+      count: Number(item.count),
+      detail: item.product.name || 'Varsayılan Ürün Detayı'
+    }));
+
+    const orderPayload = {
+      address_id: Number(selectedShippingId),
+      order_date: nowIso,
+      card_no: cleanCardNo,
+      card_name: selectedCard?.name_on_card || 'Kayıtlı Müşteri',
+      card_expire_month: Number(selectedCard?.expire_month || 12),
+      card_expire_year: Number(selectedCard?.expire_year || 2028),
+      card_ccv: 321,
+      price: Number(grandTotal),
+      products: orderProducts
+    };
+
+    const result = await dispatch(createOrder(orderPayload));
+    setIsOrderSubmitting(false);
+
+    if (result.success) {
+      setCreatedOrderData(result.data || orderPayload);
+      setIsSuccessModalOpen(true);
+    }
   };
 
   const formatCardNumber = (cardNo) => {
@@ -964,6 +999,58 @@ export default function CreateOrderPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Order Success Congratulations Modal (T22) */}
+      {isSuccessModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 overflow-y-auto">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 text-center space-y-6 animate-fadeIn border border-emerald-100">
+            <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto ring-8 ring-emerald-50">
+              <CheckCircle2 className="w-12 h-12" />
+            </div>
+
+            <div>
+              <h2 className="text-2xl font-black text-slate-900 tracking-tight">
+                🎉 Tebrikler!
+              </h2>
+              <p className="text-sm font-bold text-emerald-600 mt-1">
+                Siparişiniz Başarıyla Oluşturuldu
+              </p>
+              <p className="text-xs text-slate-500 mt-2 leading-relaxed">
+                Siparişiniz başarıyla alındı ve hazırlanma sürecine geçti. Alışverişiniz için teşekkür ederiz!
+              </p>
+            </div>
+
+            {createdOrderData && (
+              <div className="bg-slate-50 rounded-2xl p-4 text-xs space-y-2 text-left border border-gray-100">
+                <div className="flex justify-between text-slate-600">
+                  <span>Sipariş No:</span>
+                  <span className="font-bold text-slate-800">#{createdOrderData.id || Math.floor(100000 + Math.random() * 900000)}</span>
+                </div>
+                <div className="flex justify-between text-slate-600">
+                  <span>Tarih:</span>
+                  <span className="font-semibold text-slate-800">{createdOrderData.order_date || new Date().toLocaleString('tr-TR')}</span>
+                </div>
+                <div className="flex justify-between text-slate-600">
+                  <span>Ödenen Tutar:</span>
+                  <span className="font-black text-orange-600 text-sm">₺{Number(createdOrderData.price || grandTotal).toLocaleString('tr-TR', { minimumFractionDigits: 2 })}</span>
+                </div>
+              </div>
+            )}
+
+            <div>
+              <button
+                onClick={() => {
+                  setIsSuccessModalOpen(false);
+                  navigate('/');
+                }}
+                className="w-full py-3.5 px-6 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl shadow-lg shadow-orange-100 transition duration-200"
+              >
+                Alışverişe Devam Et (Home)
+              </button>
+            </div>
           </div>
         </div>
       )}
