@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import md5 from 'md5';
-import { LogOut, User, ShoppingCart as CartIcon, Search, Heart, ChevronDown } from 'lucide-react';
+import { LogOut, User, ShoppingCart as CartIcon, Search, Heart, ChevronDown, Package } from 'lucide-react';
 import { logout } from '../store/actions/clientActions';
 
 export default function Header() {
@@ -14,6 +14,7 @@ export default function Header() {
 
   const [isShopMenuOpen, setIsShopMenuOpen] = useState(false);
   const [isCartMenuOpen, setIsCartMenuOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
   const totalCartItems = cart ? cart.reduce((acc, item) => acc + item.count, 0) : 0;
   const isLoggedIn = user && (user.email || user.name);
@@ -253,28 +254,56 @@ export default function Header() {
 
           {/* Auth State */}
           {isLoggedIn ? (
-            <div className="flex items-center space-x-3 pl-3 border-l border-gray-200">
-              {gravatarUrl ? (
-                <img
-                  src={gravatarUrl}
-                  alt={user.name || user.email}
-                  className="w-8 h-8 rounded-full border border-gray-300 object-cover"
-                />
-              ) : (
-                <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
-                  <User className="w-4 h-4" />
+            <div
+              className="relative pl-3 border-l border-gray-200"
+              onMouseEnter={() => setIsUserMenuOpen(true)}
+              onMouseLeave={() => setIsUserMenuOpen(false)}
+            >
+              <button className="flex items-center space-x-2 py-2 hover:text-orange-600 transition focus:outline-none">
+                {gravatarUrl ? (
+                  <img
+                    src={gravatarUrl}
+                    alt={user.name || user.email}
+                    className="w-8 h-8 rounded-full border border-gray-300 object-cover"
+                  />
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-orange-600">
+                    <User className="w-4 h-4" />
+                  </div>
+                )}
+                <span className="text-xs font-bold text-slate-800 hidden sm:inline flex items-center gap-1">
+                  {user.name || user.email?.split('@')[0]}
+                  <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                </span>
+              </button>
+
+              {/* User Dropdown Menu */}
+              {isUserMenuOpen && (
+                <div className="absolute top-full right-0 w-48 bg-white border border-gray-100 shadow-xl rounded-xl py-2 z-50 animate-fadeIn">
+                  <div className="px-4 py-2 border-b border-gray-50 text-xs">
+                    <p className="font-bold text-slate-800 truncate">{user.name || 'Kullanıcı'}</p>
+                    <p className="text-[11px] text-slate-400 truncate">{user.email}</p>
+                  </div>
+
+                  <Link
+                    to="/orders"
+                    onClick={() => setIsUserMenuOpen(false)}
+                    className="flex items-center gap-2 px-4 py-2.5 text-xs font-bold text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition"
+                  >
+                    <Package className="w-4 h-4 text-orange-500" /> Siparişlerim (Previous Orders)
+                  </Link>
+
+                  <button
+                    onClick={() => {
+                      setIsUserMenuOpen(false);
+                      handleLogout();
+                    }}
+                    className="w-full text-left flex items-center gap-2 px-4 py-2.5 text-xs font-bold text-red-600 hover:bg-red-50 transition border-t border-gray-50"
+                  >
+                    <LogOut className="w-4 h-4" /> Çıkış Yap (Logout)
+                  </button>
                 </div>
               )}
-              <span className="text-xs font-bold text-slate-800 hidden sm:inline">
-                {user.name || user.email?.split('@')[0]}
-              </span>
-              <button
-                onClick={handleLogout}
-                title="Logout"
-                className="p-1 text-slate-500 hover:text-red-600 transition"
-              >
-                <LogOut className="w-4 h-4" />
-              </button>
             </div>
           ) : (
             <div className="flex items-center space-x-2 pl-3 border-l border-gray-200">

@@ -49,3 +49,15 @@ export const createOrder = (orderPayload) => async (dispatch) => {
   }
 };
 
+// Fetch Orders Thunk (T23)
+export const fetchOrders = () => async () => {
+  try {
+    const res = await API.get('/order');
+    return res.data;
+  } catch (error) {
+    console.error('Fetch orders error:', error);
+    toast.error('Geçmiş siparişleriniz yüklenirken bir hata oluştu.');
+    return [];
+  }
+};
+

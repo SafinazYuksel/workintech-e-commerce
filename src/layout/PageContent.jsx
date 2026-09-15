@@ -7,6 +7,7 @@ import LoginPage from '../pages/LoginPage';
 import ProductDetailPage from '../pages/ProductDetailPage';
 import ShoppingCartPage from '../pages/ShoppingCartPage';
 import CreateOrderPage from '../pages/CreateOrderPage';
+import PreviousOrdersPage from '../pages/PreviousOrdersPage';
 import ProtectedRoute from '../components/ProtectedRoute';
 
 export default function PageContent() {
@@ -32,6 +33,22 @@ export default function PageContent() {
           element={
             <ProtectedRoute>
               <CreateOrderPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/orders"
+          element={
+            <ProtectedRoute>
+              <PreviousOrdersPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/previous-orders"
+          element={
+            <ProtectedRoute>
+              <PreviousOrdersPage />
             </ProtectedRoute>
           }
         />
