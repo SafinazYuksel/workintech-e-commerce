@@ -145,7 +145,7 @@ export default function Header() {
             )}
           </div>
 
-          <Link to="/" className="hover:text-indigo-600 transition">
+          <Link to="/about" className="hover:text-indigo-600 transition">
             About
           </Link>
           <Link to="/" className="hover:text-indigo-600 transition">
