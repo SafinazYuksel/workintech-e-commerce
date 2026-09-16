@@ -7,6 +7,11 @@ export default function AboutPage() {
     {
       name: 'Username',
       role: 'Profession',
+      image: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&w=500&q=80'
+    },
+    {
+      name: 'Username',
+      role: 'Profession',
       image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=500&q=80'
     },
     {
@@ -18,6 +23,16 @@ export default function AboutPage() {
       name: 'Username',
       role: 'Profession',
       image: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=500&q=80'
+    },
+    {
+      name: 'Username',
+      role: 'Profession',
+      image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=500&q=80'
+    },
+    {
+      name: 'Username',
+      role: 'Profession',
+      image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=500&q=80'
     }
   ];
 
