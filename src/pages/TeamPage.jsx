@@ -129,11 +129,11 @@ export default function TeamPage() {
       {/* 3. Core Team Grid */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
         <div className="max-w-xl mx-auto mb-12">
-          <h2 className="text-3xl font-black text-slate-900 tracking-tight">
-            Meet Our Professionals
+          <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
+            Meet Our Team
           </h2>
           <p className="text-xs sm:text-sm text-slate-500 mt-2 leading-relaxed">
-            Problems trying to resolve the conflict between the two major realms of Classical mechanics.
+            Problems trying to resolve the conflict between the two major realms of Classical physics: Newtonian mechanics
           </p>
         </div>
 
