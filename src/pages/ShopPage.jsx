@@ -25,6 +25,15 @@ export default function ShopPage() {
   const [filterState, setFilterState] = useState(searchParams.get('filter') || '');
   const [sortState, setSortState] = useState(searchParams.get('sort') || '');
 
+  // Sync state with URL searchParams
+  useEffect(() => {
+    const urlSort = searchParams.get('sort') || '';
+    const urlFilter = searchParams.get('filter') || '';
+    setSortState(urlSort);
+    setFilterState(urlFilter);
+    setFilterInput(urlFilter);
+  }, [searchParams]);
+
   // 1. Fetch categories on mount
   useEffect(() => {
     dispatch(fetchCategories());

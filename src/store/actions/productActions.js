@@ -99,6 +99,18 @@ export const fetchProducts = (params = {}) => async (dispatch, getState) => {
       total = productList.length;
     }
 
+    // Perform guaranteed sorting on productList if sort parameter is active
+    if (params.sort) {
+      const [field, order] = params.sort.split(':');
+      if (field && (order === 'asc' || order === 'desc')) {
+        productList = [...productList].sort((a, b) => {
+          const valA = Number(a[field]) !== undefined && !isNaN(Number(a[field])) ? Number(a[field]) : 0;
+          const valB = Number(b[field]) !== undefined && !isNaN(Number(b[field])) ? Number(b[field]) : 0;
+          return order === 'asc' ? valA - valB : valB - valA;
+        });
+      }
+    }
+
     // Set total and products to Product Reducer
     dispatch(setProductList(productList));
     dispatch(setTotal(total));
