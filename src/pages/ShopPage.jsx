@@ -175,20 +175,8 @@ export default function ShopPage() {
             </button>
           </div>
 
-          {/* Filter Input & Sort Select Component */}
-          <form onSubmit={handleFilterSubmit} className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-            {/* Filter Input */}
-            <div className="relative flex-grow md:flex-grow-0">
-              <input
-                type="text"
-                placeholder="Filtrele (ör: siyah)..."
-                value={filterInput}
-                onChange={(e) => setFilterInput(e.target.value)}
-                className="w-full text-xs px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              />
-            </div>
-
-            {/* Sort Select Component */}
+          {/* Sort Select Component */}
+          <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
             <select
               value={sortState}
               onChange={handleSortChange}
@@ -200,15 +188,7 @@ export default function ShopPage() {
               <option value="rating:asc">Puan: Düşükten Yükseğe (rating:asc)</option>
               <option value="rating:desc">Puan: Yüksekten Düşüğe (rating:desc)</option>
             </select>
-
-            {/* Filter Submit Button */}
-            <button
-              type="submit"
-              className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-lg flex items-center gap-1.5 transition shadow-sm"
-            >
-              <FilterIcon className="w-3.5 h-3.5" /> Filtrele
-            </button>
-          </form>
+          </div>
         </div>
       </div>
 
