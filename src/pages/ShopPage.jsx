@@ -112,19 +112,6 @@ export default function ShopPage() {
     navigate(`/shop/${catGender}/${slug}/${cat.id}${searchString}`);
   };
 
-  // Top 5 categories by rating
-  const top5Categories = categories && categories.length > 0
-    ? [...categories]
-        .sort((a, b) => (b.rating || 0) - (a.rating || 0))
-        .slice(0, 5)
-    : [
-        { id: 1, title: 'KADIN TİŞÖRT', code: 'k:tisort', gender: 'k', rating: 4.9, img: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=500&q=80' },
-        { id: 2, title: 'ERKEK KOT', code: 'e:tisort', gender: 'e', rating: 4.8, img: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=500&q=80' },
-        { id: 3, title: 'KADIN CEKET', code: 'k:ceket', gender: 'k', rating: 4.7, img: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&w=500&q=80' },
-        { id: 4, title: 'ERKEK AYAKKABI', code: 'e:ayakkabi', gender: 'e', rating: 4.6, img: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=500&q=80' },
-        { id: 5, title: 'KADIN ELBİSE', code: 'k:elbise', gender: 'k', rating: 4.5, img: 'https://images.unsplash.com/photo-1539533018447-63fcce2678e3?auto=format&fit=crop&w=500&q=80' }
-      ];
-
   // Pagination calculation
   const totalItems = total || productList.length;
   const totalPages = Math.ceil(totalItems / PAGE_LIMIT) || 1;
@@ -152,33 +139,6 @@ export default function ShopPage() {
               </>
             )}
           </div>
-        </div>
-      </div>
-
-      {/* Top 5 Categories Section (Sorted by rating) */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-6">
-        <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-          {top5Categories.map((cat) => (
-            <div
-              key={cat.id}
-              onClick={() => handleCategoryClick(cat)}
-              className={`relative h-48 rounded-xl overflow-hidden group cursor-pointer border shadow-sm transition duration-300 ${
-                String(cat.id) === String(categoryId)
-                  ? 'border-indigo-600 ring-4 ring-indigo-200'
-                  : 'border-gray-200 hover:border-indigo-400'
-              }`}
-            >
-              <img
-                src={cat.img || cat.image || 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=500&q=80'}
-                alt={cat.title || cat.name}
-                className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
-              />
-              <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition flex flex-col items-center justify-center text-white text-center p-2">
-                <h3 className="text-sm font-extrabold uppercase tracking-wide">{cat.title || cat.name}</h3>
-                <span className="text-[11px] font-medium text-indigo-200 mt-1">⭐ Puan: {cat.rating || '5.0'}</span>
-              </div>
-            </div>
-          ))}
         </div>
       </div>
 
