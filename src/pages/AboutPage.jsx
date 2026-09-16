@@ -5,34 +5,44 @@ import { Play, Users, Globe, Award, ShoppingBag, ArrowRight } from 'lucide-react
 export default function AboutPage() {
   const teamMembers = [
     {
-      name: 'Username',
-      role: 'Profession',
-      image: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&w=500&q=80'
-    },
-    {
-      name: 'Username',
-      role: 'Profession',
+      name: 'Jerome Bell',
+      role: 'IBM',
       image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=500&q=80'
     },
     {
-      name: 'Username',
-      role: 'Profession',
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=500&q=80'
-    },
-    {
-      name: 'Username',
-      role: 'Profession',
-      image: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=500&q=80'
-    },
-    {
-      name: 'Username',
-      role: 'Profession',
+      name: 'Brooklyn Simmons',
+      role: 'eBay',
       image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=500&q=80'
     },
     {
-      name: 'Username',
-      role: 'Profession',
+      name: 'Ronald Richards',
+      role: 'Starbucks',
+      image: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=500&q=80'
+    },
+    {
+      name: 'Floyd Miles',
+      role: 'Facebook',
+      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=500&q=80'
+    },
+    {
+      name: 'Jane Cooper',
+      role: 'Mitsubishi',
       image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=500&q=80'
+    },
+    {
+      name: 'Robert Fox',
+      role: 'IBM',
+      image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=500&q=80'
+    },
+    {
+      name: 'Leslie Alexander',
+      role: 'The Walt Disney Company',
+      image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=500&q=80'
+    },
+    {
+      name: 'Jacob Jones',
+      role: 'Starbucks',
+      image: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=500&q=80'
     }
   ];
 
@@ -127,7 +137,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* 5. Meet Our Team Section (desktop-team-4 & mobile-team-4 layout) */}
+      {/* 5. Meet Our Team Section (4x2 layout matching desktop-team-1 and mobile-team-1) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
         <div className="max-w-xl mx-auto space-y-3 mb-12">
           <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">Meet Our Team</h2>
@@ -136,7 +146,7 @@ export default function AboutPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
           {teamMembers.map((member, i) => (
             <div key={i} className="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition duration-300 flex flex-col items-center">
               <div className="w-full h-72 overflow-hidden">
