@@ -5,21 +5,23 @@ import { useNavigate } from 'react-router-dom';
 const slides = [
   {
     id: 1,
-    season: 'SUMMER 2026',
+    season: 'SUMMER 2020',
     title: 'NEW COLLECTION',
     description: 'We know how large objects will act, but things on a small scale.',
     buttonText: 'SHOP NOW',
     image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1200&q=80',
-    bgColor: 'bg-emerald-600'
+    bgColor: 'bg-[#02B4E8]',
+    buttonBg: 'bg-[#2DC071] hover:bg-[#28b268]'
   },
   {
     id: 2,
-    season: 'AUTUMN 2026',
+    season: 'AUTUMN 2020',
     title: 'BESTSELLER PRODUCTS',
     description: 'Explore our top rated items crafted with premium materials.',
     buttonText: 'DISCOVER MORE',
     image: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1200&q=80',
-    bgColor: 'bg-indigo-600'
+    bgColor: 'bg-[#23A6F0]',
+    buttonBg: 'bg-[#2DC071] hover:bg-[#28b268]'
   }
 ];
 
@@ -57,7 +59,7 @@ export default function Slider() {
 
       {/* Content Container */}
       <div className="relative z-10 max-w-7xl mx-auto h-full px-6 sm:px-12 flex flex-col justify-center items-start text-left">
-        <span className="text-xs sm:text-sm font-bold tracking-widest uppercase mb-3 text-emerald-200">
+        <span className="text-xs sm:text-sm font-bold tracking-widest uppercase mb-3 text-white">
           {slide.season}
         </span>
         <h1 className="text-4xl sm:text-6xl font-black tracking-tight mb-4 max-w-xl leading-none">
@@ -67,8 +69,8 @@ export default function Slider() {
           {slide.description}
         </p>
         <button
-          onClick={() => navigate('/shop/kadin/ceket/3/gri-regular-astar/322')}
-          className="bg-emerald-500 hover:bg-emerald-400 text-white font-bold py-3.5 px-8 rounded-md transition duration-200 shadow-lg text-sm tracking-wider uppercase"
+          onClick={() => navigate('/shop')}
+          className={`${slide.buttonBg} text-white font-bold py-3.5 px-8 rounded-md transition duration-200 shadow-lg text-sm tracking-wider uppercase`}
         >
           {slide.buttonText}
         </button>
