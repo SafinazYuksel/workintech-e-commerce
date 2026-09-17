@@ -8,6 +8,7 @@ import VideoSection from '../components/VideoSection';
 import StatsSection from '../components/StatsSection';
 import SubscriptionSection from '../components/SubscriptionSection';
 import ClientsSection from '../components/ClientsSection';
+import BlogSection from '../components/BlogSection';
 
 const sampleProducts = [
   {
@@ -78,6 +79,9 @@ export default function HomePage() {
 
       {/* Clients Section (desktop-clients-1 & mobile-clients-1) */}
       <ClientsSection />
+
+      {/* Featured Blog Posts (desktop-blog-1 & mobile-blog-1) */}
+      <BlogSection limit={2} />
 
       {/* Subscription Section (desktop-subscription-1 & mobile-subscription-1) */}
       <SubscriptionSection />

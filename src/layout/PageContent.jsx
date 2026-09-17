@@ -11,6 +11,7 @@ import PreviousOrdersPage from '../pages/PreviousOrdersPage';
 import AboutPage from '../pages/AboutPage';
 import TeamPage from '../pages/TeamPage';
 import ContactPage from '../pages/ContactPage';
+import BlogPage from '../pages/BlogPage';
 import ProtectedRoute from '../components/ProtectedRoute';
 
 export default function PageContent() {
@@ -23,6 +24,7 @@ export default function PageContent() {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/about-us" element={<AboutPage />} />
         <Route path="/team" element={<TeamPage />} />
+        <Route path="/blog" element={<BlogPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/contact-us" element={<ContactPage />} />
         <Route path="/signup" element={<SignUpPage />} />
