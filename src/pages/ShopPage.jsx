@@ -3,6 +3,7 @@ import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux';
 import { LayoutGrid, List, ChevronRight, Filter as FilterIcon, Loader2, ChevronLeft } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
+import ShopCards from '../components/ShopCards';
 import { fetchProducts, fetchCategories } from '../store/actions/productActions';
 
 export default function ShopPage() {
@@ -141,6 +142,9 @@ export default function ShopPage() {
           </div>
         </div>
       </div>
+
+      {/* Promotional Shop Cards (desktop-shop-cards-1 & mobile-shop-cards-1) */}
+      <ShopCards />
 
       {/* Controls & Filtering Bar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-8">

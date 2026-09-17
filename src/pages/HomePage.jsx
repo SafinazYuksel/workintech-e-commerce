@@ -1,6 +1,7 @@
 import React from 'react';
 import Slider from '../components/Slider';
 import ProductCard from '../components/ProductCard';
+import ShopCards from '../components/ShopCards';
 
 const sampleProducts = [
   {
@@ -50,12 +51,15 @@ const sampleProducts = [
 
 export default function HomePage() {
   return (
-    <div className="flex flex-col min-h-screen bg-slate-50">
+    <div className="flex flex-col min-h-screen bg-slate-50 font-sans">
       {/* Hero Slider */}
       <Slider />
 
+      {/* Promotional Shop Cards (desktop-shop-cards-1 & mobile-shop-cards-1) */}
+      <ShopCards />
+
       {/* Editors Pick / Categories */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center w-full">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center w-full">
         <h2 className="text-2xl sm:text-3xl font-black text-slate-900 uppercase tracking-tight">
           EDITOR'S PICK
         </h2>
