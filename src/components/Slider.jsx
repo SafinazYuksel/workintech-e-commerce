@@ -15,12 +15,12 @@ const slides = [
   },
   {
     id: 2,
-    season: 'AUTUMN 2020',
-    title: 'BESTSELLER PRODUCTS',
-    description: 'Explore our top rated items crafted with premium materials.',
-    buttonText: 'DISCOVER MORE',
+    season: 'SUMMER 2020',
+    title: 'NEW COLLECTION',
+    description: 'We know how large objects will act, but things on a small scale.',
+    buttonText: 'SHOP NOW',
     image: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1200&q=80',
-    bgColor: 'bg-[#23A6F0]',
+    bgColor: 'bg-[#02B4E8]',
     buttonBg: 'bg-[#2DC071] hover:bg-[#28b268]'
   }
 ];
