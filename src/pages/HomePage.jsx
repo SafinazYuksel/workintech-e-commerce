@@ -4,6 +4,7 @@ import ProductCard from '../components/ProductCard';
 import ShopCards from '../components/ShopCards';
 import FeaturedProductSection from '../components/FeaturedProductSection';
 import FeaturesSection from '../components/FeaturesSection';
+import VideoSection from '../components/VideoSection';
 import StatsSection from '../components/StatsSection';
 import SubscriptionSection from '../components/SubscriptionSection';
 
@@ -67,6 +68,9 @@ export default function HomePage() {
 
       {/* Features Section (desktop-features-1 & mobile-features-1) */}
       <FeaturesSection />
+
+      {/* Video Banner Section (desktop-video-1 & mobile-video-1) */}
+      <VideoSection />
 
       {/* Stats Section (desktop-stats-1 & mobile-stats-1) */}
       <StatsSection />
