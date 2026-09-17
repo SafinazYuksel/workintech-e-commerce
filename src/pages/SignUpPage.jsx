@@ -101,9 +101,14 @@ export default function SignUpPage() {
           <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             {/* Name */}
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Ad Soyad (Name) *
-              </label>
+              <div className="flex justify-between items-center mb-1">
+                <label className="block text-sm font-medium text-gray-700">
+                  Ad Soyad (Name) *
+                </label>
+                <span className="text-xs text-gray-500 font-normal">
+                  En az 3 karakter
+                </span>
+              </div>
               <div className="mt-1">
                 <input
                   type="text"
@@ -149,9 +154,14 @@ export default function SignUpPage() {
 
             {/* Password */}
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Şifre (Password) *
-              </label>
+              <div className="flex justify-between items-center mb-1">
+                <label className="block text-sm font-medium text-gray-700">
+                  Şifre (Password) *
+                </label>
+                <span className="text-xs text-indigo-600 font-semibold bg-indigo-50 px-2 py-0.5 rounded-full">
+                  En az 8 karakter
+                </span>
+              </div>
               <div className="mt-1">
                 <input
                   type="password"
@@ -167,11 +177,14 @@ export default function SignUpPage() {
                     }
                   })}
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  placeholder="••••••••"
+                  placeholder="En az 8 karakter (örn: Abc1234!)"
                 />
               </div>
+              <p className="mt-1 text-[11px] text-gray-500 font-medium">
+                * Şifreniz en az 8 karakter olmalı; 1 büyük harf, 1 küçük harf, 1 rakam ve 1 özel karakter içermelidir.
+              </p>
               {errors.password && (
-                <p className="mt-1 text-xs text-red-600">{errors.password.message}</p>
+                <p className="mt-1 text-xs text-red-600 font-medium">{errors.password.message}</p>
               )}
             </div>
 
