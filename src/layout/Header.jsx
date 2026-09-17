@@ -311,13 +311,16 @@ export default function Header() {
               )}
             </div>
           ) : (
-            <Link
-              to="/login"
-              className="text-[#23A6F0] hover:opacity-80 transition font-bold flex items-center gap-1.5"
-            >
+            <div className="flex items-center space-x-1.5 text-[#23A6F0] font-bold">
               <User className="w-4 h-4" />
-              <span>Login / Register</span>
-            </Link>
+              <Link to="/login" className="hover:opacity-80 hover:underline transition">
+                Login
+              </Link>
+              <span>/</span>
+              <Link to="/signup" className="hover:opacity-80 hover:underline transition">
+                Register
+              </Link>
+            </div>
           )}
 
           {/* Search Icon */}
@@ -514,13 +517,22 @@ export default function Header() {
               </button>
             </div>
           ) : (
-            <div className="pt-4 border-t border-gray-100 w-full flex flex-col items-center gap-3">
+            <div className="pt-4 border-t border-gray-100 w-full flex items-center justify-center space-x-2 text-[#23A6F0] font-bold text-xl">
+              <User className="w-5 h-5" />
               <Link
                 to="/login"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="text-[#23A6F0] font-bold text-xl flex items-center gap-2"
+                className="hover:underline transition"
               >
-                <User className="w-5 h-5" /> Login / Register
+                Login
+              </Link>
+              <span>/</span>
+              <Link
+                to="/signup"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="hover:underline transition"
+              >
+                Register
               </Link>
             </div>
           )}
