@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Phone, Mail, MapPin, Send, MessageSquare, ArrowRight, Globe, Share2, CheckCircle2 } from 'lucide-react';
 import { toast } from 'react-toastify';
+import ContactCtaSection from '../components/ContactCtaSection';
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -129,8 +130,11 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* 3. Interactive Contact Form & Let's Talk Section */}
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
+      {/* 3. Get answers to all your questions CTA matching desktop-contact-1 & mobile-contact-1 */}
+      <ContactCtaSection />
+
+      {/* 4. Interactive Contact Form & Let's Talk Section */}
+      <section id="contact-form" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
         <div className="space-y-4 mb-8">
           <span className="text-xs font-black text-indigo-600 uppercase tracking-widest block">
             WE CAN'T WAIT TO MEET YOU
