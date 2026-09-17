@@ -12,7 +12,6 @@ export default function LoginPage() {
   const {
     register,
     handleSubmit,
-    setValue,
     formState: { errors, isSubmitting }
   } = useForm({
     defaultValues: {
@@ -28,11 +27,6 @@ export default function LoginPage() {
       password: data.password
     };
     await dispatch(loginUser(credentials, data.rememberMe, navigate));
-  };
-
-  const fillQuickCredentials = (email) => {
-    setValue('email', email);
-    setValue('password', '123456');
   };
 
   return (
@@ -127,33 +121,7 @@ export default function LoginPage() {
             </div>
           </form>
 
-          {/* Test Users Quick Select */}
-          <div className="mt-6 border-t border-gray-200 pt-4">
-            <p className="text-xs text-gray-500 mb-2 font-semibold">Test Hesapları (Hızlı Doldur):</p>
-            <div className="flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={() => fillQuickCredentials('customer@commerce.com')}
-                className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-2 py-1 rounded border border-gray-300"
-              >
-                Müşteri (customer)
-              </button>
-              <button
-                type="button"
-                onClick={() => fillQuickCredentials('store@commerce.com')}
-                className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-2 py-1 rounded border border-gray-300"
-              >
-                Mağaza (store)
-              </button>
-              <button
-                type="button"
-                onClick={() => fillQuickCredentials('admin@commerce.com')}
-                className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-2 py-1 rounded border border-gray-300"
-              >
-                Admin (admin)
-              </button>
-            </div>
-          </div>
+
         </div>
       </div>
     </div>
