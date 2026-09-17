@@ -4,6 +4,7 @@ import ProductCard from '../components/ProductCard';
 import ShopCards from '../components/ShopCards';
 import FeaturedProductSection from '../components/FeaturedProductSection';
 import FeaturesSection from '../components/FeaturesSection';
+import CtaSection from '../components/CtaSection';
 
 const sampleProducts = [
   {
@@ -65,6 +66,9 @@ export default function HomePage() {
 
       {/* Features Section (desktop-features-1 & mobile-features-1) */}
       <FeaturesSection />
+
+      {/* CTA Section (desktop-cta-1 & mobile-cta-1) */}
+      <CtaSection />
 
       {/* Editors Pick / Categories */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center w-full">
