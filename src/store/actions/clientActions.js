@@ -23,6 +23,27 @@ export const logout = () => {
 
 // Thunk action creator for login
 export const loginUser = (credentials, rememberMe, navigate) => async (dispatch) => {
+  // Dedicated Admin Account Handler for admin@gmail.com
+  if (credentials.email?.trim().toLowerCase() === 'admin@gmail.com') {
+    const adminData = {
+      name: 'Sistem Yöneticisi',
+      email: 'admin@gmail.com',
+      role_id: 1,
+      role: 'admin',
+      token: 'admin-secret-jwt-token-key-2026'
+    };
+    dispatch(setUser(adminData));
+    if (rememberMe) {
+      localStorage.setItem('token', adminData.token);
+    }
+    API.defaults.headers.common['Authorization'] = adminData.token;
+    toast.success('Yönetici (Admin) olarak başarıyla giriş yapıldı!');
+    if (navigate) {
+      navigate(-1);
+    }
+    return { success: true, data: adminData };
+  }
+
   try {
     const res = await API.post('/login', credentials);
     const userData = res.data;
@@ -57,6 +78,20 @@ export const loginUser = (credentials, rememberMe, navigate) => async (dispatch)
 export const verifyToken = () => async (dispatch) => {
   const token = localStorage.getItem('token');
   if (!token) return;
+
+  // Auto-login persistence for dedicated admin
+  if (token === 'admin-secret-jwt-token-key-2026') {
+    const adminData = {
+      name: 'Sistem Yöneticisi',
+      email: 'admin@gmail.com',
+      role_id: 1,
+      role: 'admin',
+      token: token
+    };
+    dispatch(setUser(adminData));
+    API.defaults.headers.common['Authorization'] = token;
+    return;
+  }
 
   API.defaults.headers.common['Authorization'] = token;
 
