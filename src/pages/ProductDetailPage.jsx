@@ -363,175 +363,81 @@ export default function ProductDetailPage() {
         </div>
       </div>
 
-      {/* 4. Tab Content Area - Dynamic Content based on Active Tab */}
+      {/* 4. Tab Content Area matching desktop-product-2 (3-Column Layout) */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {activeTab === 'description' && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 items-start">
-            {/* Column 1: Product Showcase Image */}
-            <div className="rounded-xl overflow-hidden shadow-sm border border-gray-100 h-80 bg-gray-50 flex items-center justify-center">
-              <img
-                src={currentImage}
-                alt={product.name || 'Product Detail'}
-                className="w-full h-full object-cover object-center"
-              />
-            </div>
-
-            {/* Column 2: Paragraph Content */}
-            <div className="space-y-4">
-              <h3 className="text-xl font-bold text-[#252B42]">
-                {product.name || 'Ürün Detayları & Açıklama'}
-              </h3>
-              <p className="text-sm text-[#737373] leading-relaxed">
-                {product.description ||
-                  "Met minim Mollie non desert Alamo est sit cliquey dolor do met sent. RELIT official consequent door ENIM RELIT Mollie. Excitation venial consequent sent nostrum met."}
-              </p>
-              <p className="text-sm text-[#737373] leading-relaxed">
-                Yüksek kaliteli kumaş yapısı ve özenle işlenmiş dikiş detayları sayesinde hem günlük kullanımda hem de özel davetlerde maksimum konfor ve şıklık sunar. Nefes alabilen dokusu gün boyu rahat etmenizi sağlar.
-              </p>
-              <p className="text-sm text-[#737373] leading-relaxed">
-                Zamansız tasarımı ile gardırobunuzun vazgeçilmez parçalarından biri olmaya adaydır. Kolay kombinlenebilir yapısıyla stilinizi en iyi şekilde yansıtır.
-              </p>
-            </div>
-
-            {/* Column 3: Bullet Lists with Features */}
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-xl font-bold text-[#252B42] mb-3">
-                  Öne Çıkan Özellikler
-                </h3>
-                <ul className="space-y-2.5 text-xs font-bold text-[#737373]">
-                  <li className="flex items-center space-x-2">
-                    <ChevronRight className="w-4 h-4 text-[#23A6F0] flex-shrink-0" />
-                    <span>%100 Premium Kalite Kumaş & Dokuma</span>
-                  </li>
-                  <li className="flex items-center space-x-2">
-                    <ChevronRight className="w-4 h-4 text-[#23A6F0] flex-shrink-0" />
-                    <span>Ergonomik Kesim ve Modern Tasarım</span>
-                  </li>
-                  <li className="flex items-center space-x-2">
-                    <ChevronRight className="w-4 h-4 text-[#23A6F0] flex-shrink-0" />
-                    <span>Nefes Alabilir, Terletmeyen Dokusal Yapı</span>
-                  </li>
-                  <li className="flex items-center space-x-2">
-                    <ChevronRight className="w-4 h-4 text-[#23A6F0] flex-shrink-0" />
-                    <span>Uzun Ömürlü ve Dayanıklı Dikiş İşçiliği</span>
-                  </li>
-                </ul>
-              </div>
-
-              <div>
-                <h3 className="text-xl font-bold text-[#252B42] mb-3">
-                  Bakım ve Kullanım
-                </h3>
-                <ul className="space-y-2.5 text-xs font-bold text-[#737373]">
-                  <li className="flex items-center space-x-2">
-                    <ChevronRight className="w-4 h-4 text-[#23A6F0] flex-shrink-0" />
-                    <span>30°C Hassas Yıkama Önerilir</span>
-                  </li>
-                  <li className="flex items-center space-x-2">
-                    <ChevronRight className="w-4 h-4 text-[#23A6F0] flex-shrink-0" />
-                    <span>Düşük Sıcaklıkta Ütüleme Yapılabilir</span>
-                  </li>
-                  <li className="flex items-center space-x-2">
-                    <ChevronRight className="w-4 h-4 text-[#23A6F0] flex-shrink-0" />
-                    <span>Kuru Temizlemeye Uygundur</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 items-start">
+          {/* Column 1: Interior Image */}
+          <div className="rounded-xl overflow-hidden shadow-sm border border-gray-100 h-80">
+            <img
+              src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=800&q=80"
+              alt="Room Interior"
+              className="w-full h-full object-cover"
+            />
           </div>
-        )}
 
-        {activeTab === 'additional' && (
-          <div className="max-w-3xl mx-auto bg-[#FAFAFA] rounded-xl p-8 border border-gray-100 shadow-sm">
-            <h3 className="text-xl font-bold text-[#252B42] mb-6 border-b border-gray-200 pb-3">
-              Teknik Özellikler ve Ek Bilgiler
+          {/* Column 2: Paragraph Content */}
+          <div className="space-y-4">
+            <h3 className="text-xl font-bold text-[#252B42]">
+              the quick fox jumps over
             </h3>
-            <div className="divide-y divide-gray-200 text-sm">
-              <div className="py-3 flex justify-between">
-                <span className="font-bold text-[#737373]">Malzeme & Kumaş:</span>
-                <span className="font-semibold text-[#252B42]">Pamuk & Polyester Karışımı</span>
-              </div>
-              <div className="py-3 flex justify-between">
-                <span className="font-bold text-[#737373]">Beden Seçenekleri:</span>
-                <span className="font-semibold text-[#252B42]">S, M, L, XL, XXL</span>
-              </div>
-              <div className="py-3 flex justify-between">
-                <span className="font-bold text-[#737373]">Renk Seçenekleri:</span>
-                <span className="font-semibold text-[#252B42]">Mavi, Yeşil, Turuncu, Koyu Lacivert</span>
-              </div>
-              <div className="py-3 flex justify-between">
-                <span className="font-bold text-[#737373]">Stok Durumu:</span>
-                <span className="font-semibold text-[#2DC071]">
-                  {product.stock ? `${product.stock} Adet Stokta` : 'Stokta Var'}
-                </span>
-              </div>
-              <div className="py-3 flex justify-between">
-                <span className="font-bold text-[#737373]">Kullanım Alanı:</span>
-                <span className="font-semibold text-[#252B42]">Günlük / Casual / Şık</span>
-              </div>
-              <div className="py-3 flex justify-between">
-                <span className="font-bold text-[#737373]">Menşei:</span>
-                <span className="font-semibold text-[#252B42]">Türkiye</span>
-              </div>
+            <p className="text-xs text-[#737373] leading-relaxed">
+              Met minim Mollie non desert Alamo est sit cliquey dolor do met sent. RELIT official consequent door ENIM RELIT Mollie. Excitation venial consequent sent nostrum met.
+            </p>
+            <p className="text-xs text-[#737373] leading-relaxed">
+              Met minim Mollie non desert Alamo est sit cliquey dolor do met sent. RELIT official consequent door ENIM RELIT Mollie. Excitation venial consequent sent nostrum met.
+            </p>
+            <p className="text-xs text-[#737373] leading-relaxed">
+              Met minim Mollie non desert Alamo est sit cliquey dolor do met sent. RELIT official consequent door ENIM RELIT Mollie. Excitation venial consequent sent nostrum met.
+            </p>
+          </div>
+
+          {/* Column 3: Bullet Lists with Chevron Icons */}
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-xl font-bold text-[#252B42] mb-3">
+                the quick fox jumps over
+              </h3>
+              <ul className="space-y-2 text-xs font-bold text-[#737373]">
+                <li className="flex items-center space-x-2">
+                  <ChevronRight className="w-4 h-4 text-[#737373] flex-shrink-0" />
+                  <span>the quick fox jumps over the lazy dog</span>
+                </li>
+                <li className="flex items-center space-x-2">
+                  <ChevronRight className="w-4 h-4 text-[#737373] flex-shrink-0" />
+                  <span>the quick fox jumps over the lazy dog</span>
+                </li>
+                <li className="flex items-center space-x-2">
+                  <ChevronRight className="w-4 h-4 text-[#737373] flex-shrink-0" />
+                  <span>the quick fox jumps over the lazy dog</span>
+                </li>
+                <li className="flex items-center space-x-2">
+                  <ChevronRight className="w-4 h-4 text-[#737373] flex-shrink-0" />
+                  <span>the quick fox jumps over the lazy dog</span>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-xl font-bold text-[#252B42] mb-3">
+                the quick fox jumps over
+              </h3>
+              <ul className="space-y-2 text-xs font-bold text-[#737373]">
+                <li className="flex items-center space-x-2">
+                  <ChevronRight className="w-4 h-4 text-[#737373] flex-shrink-0" />
+                  <span>the quick fox jumps over the lazy dog</span>
+                </li>
+                <li className="flex items-center space-x-2">
+                  <ChevronRight className="w-4 h-4 text-[#737373] flex-shrink-0" />
+                  <span>the quick fox jumps over the lazy dog</span>
+                </li>
+                <li className="flex items-center space-x-2">
+                  <ChevronRight className="w-4 h-4 text-[#737373] flex-shrink-0" />
+                  <span>the quick fox jumps over the lazy dog</span>
+                </li>
+              </ul>
             </div>
           </div>
-        )}
-
-        {activeTab === 'reviews' && (
-          <div className="max-w-4xl mx-auto space-y-8">
-            <div className="flex flex-col md:flex-row items-center justify-between bg-[#FAFAFA] p-6 rounded-xl border border-gray-100 gap-6">
-              <div className="flex items-center gap-4">
-                <div className="text-4xl font-black text-[#252B42]">{product.rating || 4.8}</div>
-                <div>
-                  <div className="flex items-center space-x-1 text-[#F3CD03]">
-                    {[1, 2, 3, 4, 5].map((s) => (
-                      <Star key={s} className="w-5 h-5 fill-current" />
-                    ))}
-                  </div>
-                  <p className="text-xs font-bold text-[#737373] mt-1">10 Kullanıcı Değerlendirmesi</p>
-                </div>
-              </div>
-              <button
-                onClick={() => toast.info('Değerlendirme formu yakında aktif olacaktır.')}
-                className="px-6 py-2.5 bg-[#23A6F0] text-white font-bold text-xs uppercase tracking-wider rounded-md hover:bg-[#1b8bc9] transition"
-              >
-                Yorum Yap
-              </button>
-            </div>
-
-            {/* Sample Customer Reviews */}
-            <div className="space-y-4">
-              <div className="p-5 bg-white border border-gray-100 rounded-xl shadow-sm space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-[#252B42] text-sm">Ahmet Y.</span>
-                  <div className="flex text-[#F3CD03]">
-                    {[1, 2, 3, 4, 5].map((s) => (
-                      <Star key={s} className="w-3.5 h-3.5 fill-current" />
-                    ))}
-                  </div>
-                </div>
-                <p className="text-xs text-[#737373] leading-relaxed">
-                  Harika bir ürün! Kumaş kalitesi ve duruşu mükemmel. Kendi bedeninizi tam alabilirsiniz.
-                </p>
-              </div>
-
-              <div className="p-5 bg-white border border-gray-100 rounded-xl shadow-sm space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-[#252B42] text-sm">Zeynep K.</span>
-                  <div className="flex text-[#F3CD03]">
-                    {[1, 2, 3, 4, 5].map((s) => (
-                      <Star key={s} className="w-3.5 h-3.5 fill-current" />
-                    ))}
-                  </div>
-                </div>
-                <p className="text-xs text-[#737373] leading-relaxed">
-                  Kargo çok hızlı ulaştı. Paketleme harikaydı, rengi ve dokusu fotoğraftakinin birebir aynısı.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
+        </div>
       </div>
 
       {/* 5. BESTSELLER PRODUCTS Section matching desktop-product-2 & desktop-product-3 */}
