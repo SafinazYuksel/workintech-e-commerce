@@ -158,7 +158,7 @@ export default function SignUpPage() {
                 <label className="block text-sm font-medium text-gray-700">
                   Şifre (Password) *
                 </label>
-                <span className="text-xs text-indigo-600 font-semibold bg-indigo-50 px-2 py-0.5 rounded-full">
+                <span className="text-xs text-gray-500 font-normal">
                   En az 8 karakter
                 </span>
               </div>
