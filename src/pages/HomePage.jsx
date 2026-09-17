@@ -9,6 +9,7 @@ import StatsSection from '../components/StatsSection';
 import SubscriptionSection from '../components/SubscriptionSection';
 import ClientsSection from '../components/ClientsSection';
 import BlogSection from '../components/BlogSection';
+import TestimonialsSection from '../components/TestimonialsSection';
 
 const sampleProducts = [
   {
@@ -67,6 +68,9 @@ export default function HomePage() {
 
       {/* Featured Products Banner & Cards (desktop-product-cards-1 & mobile-product-cards-1) */}
       <FeaturedProductSection />
+
+      {/* Customer Testimonials Reviews (desktop-testimonials-1 & mobile-testimonials-1) */}
+      <TestimonialsSection />
 
       {/* Features Section (desktop-features-1 & mobile-features-1) */}
       <FeaturesSection />
