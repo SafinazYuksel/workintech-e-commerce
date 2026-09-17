@@ -1,17 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { LayoutGrid, List, ChevronRight, Loader2 } from 'lucide-react';
+import { LayoutGrid, List, ChevronRight, Loader2, Plus, Shield } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 import ShopCards from '../components/ShopCards';
 import ClientsSection from '../components/ClientsSection';
-import { fetchProducts, fetchCategories } from '../store/actions/productActions';
+import AdminProductModal from '../components/AdminProductModal';
+import { fetchProducts, fetchCategories, deleteProduct } from '../store/actions/productActions';
+import { toast } from 'react-toastify';
 
 export default function ShopPage() {
   const { categoryId, gender, categoryName } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const user = useSelector((state) => state.client.user);
+  const isAdmin = user && (user.role_id === 1 || user.role === 'admin');
 
   const productList = useSelector((state) => state.product.productList);
   const categories = useSelector((state) => state.product.categories);
@@ -26,6 +31,26 @@ export default function ShopPage() {
   const [filterInput, setFilterInput] = useState(searchParams.get('filter') || '');
   const [filterState, setFilterState] = useState(searchParams.get('filter') || '');
   const [sortState, setSortState] = useState(searchParams.get('sort') || '');
+
+  const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState(null);
+
+  const handleOpenAddModal = () => {
+    setEditingProduct(null);
+    setIsAdminModalOpen(true);
+  };
+
+  const handleOpenEditModal = (prod) => {
+    setEditingProduct(prod);
+    setIsAdminModalOpen(true);
+  };
+
+  const handleDeleteProduct = (prodId) => {
+    if (window.confirm('Bu ürünü sistemden silmek istediğinize emin misiniz?')) {
+      dispatch(deleteProduct(prodId));
+      toast.success('Ürün başarıyla silindi! (Admin)');
+    }
+  };
 
   // Sync state with URL searchParams
   useEffect(() => {
@@ -106,6 +131,13 @@ export default function ShopPage() {
 
   return (
     <div className="bg-white min-h-screen py-6 font-sans">
+      {/* Admin Modal */}
+      <AdminProductModal
+        isOpen={isAdminModalOpen}
+        onClose={() => setIsAdminModalOpen(false)}
+        initialProduct={editingProduct}
+      />
+
       {/* Top Header & Breadcrumbs matching desktop-shop-1 */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-4">
@@ -135,6 +167,31 @@ export default function ShopPage() {
 
       {/* Controls & Filtering Bar matching desktop-shop-1 */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-8">
+        {/* Admin Management Action Banner */}
+        {isAdmin && (
+          <div className="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-2xl p-5 mb-6 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm animate-fadeIn">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-purple-700 text-white flex items-center justify-center shrink-0 shadow">
+                <Shield className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-sm font-extrabold text-purple-950 flex items-center gap-2">
+                  🛡️ Yönetici (Admin) Kontrol Paneli
+                </h3>
+                <p className="text-xs text-purple-700 mt-0.5">
+                  Sistem Yöneticisi olarak ürün ekleyebilir, fiyat/stok bilgilerini güncelleyebilir veya ürünleri silebilirsiniz.
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={handleOpenAddModal}
+              className="bg-purple-700 hover:bg-purple-800 active:scale-95 text-white text-xs font-black px-5 py-3 rounded-xl flex items-center gap-2 shadow-md transition shrink-0"
+            >
+              <Plus className="w-4 h-4 text-purple-200" /> Yeni Ürün Ekle (Admin)
+            </button>
+          </div>
+        )}
+
         <div className="bg-white py-6 flex flex-col md:flex-row items-center justify-between gap-4 border-y border-gray-100">
           {/* Total items result count */}
           <span className="text-xs font-bold text-[#737373]">
@@ -223,7 +280,12 @@ export default function ShopPage() {
             }
           >
             {productList.map((p) => (
-              <ProductCard key={p.id} product={p} />
+              <ProductCard
+                key={p.id}
+                product={p}
+                onEdit={handleOpenEditModal}
+                onDelete={handleDeleteProduct}
+              />
             ))}
           </div>
         )}

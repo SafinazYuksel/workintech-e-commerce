@@ -1,9 +1,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Star } from 'lucide-react';
+import { Star, Edit, Trash2 } from 'lucide-react';
+import { useSelector } from 'react-redux';
 
-export default function ProductCard({ product }) {
+export default function ProductCard({ product, onEdit, onDelete }) {
   const navigate = useNavigate();
+  const user = useSelector((state) => state.client.user);
+  const isAdmin = user && (user.role_id === 1 || user.role === 'admin');
 
   if (!product) return null;
 
@@ -19,10 +22,20 @@ export default function ProductCard({ product }) {
     navigate(`/shop/kadin/ceket/${product.category_id || 1}/${slug}/${product.id}`);
   };
 
+  const handleEditClick = (e) => {
+    e.stopPropagation();
+    if (onEdit) onEdit(product);
+  };
+
+  const handleDeleteClick = (e) => {
+    e.stopPropagation();
+    if (onDelete) onDelete(product.id);
+  };
+
   return (
     <div
       onClick={handleClick}
-      className="group cursor-pointer bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 flex flex-col justify-between"
+      className="group cursor-pointer bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 flex flex-col justify-between relative"
     >
       {/* Image Container */}
       <div className="relative w-full h-64 bg-gray-50 overflow-hidden">
@@ -36,14 +49,41 @@ export default function ProductCard({ product }) {
             -{product.discount}%
           </span>
         )}
+
+        {/* Admin Overlay Action Buttons */}
+        {isAdmin && (
+          <div className="absolute top-3 right-3 flex items-center gap-1.5 z-10 bg-white/90 backdrop-blur-sm p-1 rounded-lg shadow-md border border-purple-200">
+            <button
+              onClick={handleEditClick}
+              title="Ürünü Düzenle (Admin)"
+              className="p-1.5 text-purple-700 hover:bg-purple-100 rounded-md transition"
+            >
+              <Edit className="w-4 h-4" />
+            </button>
+            <button
+              onClick={handleDeleteClick}
+              title="Ürünü Sil (Admin)"
+              className="p-1.5 text-red-600 hover:bg-red-100 rounded-md transition"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Content */}
       <div className="p-4 flex flex-col flex-grow justify-between text-left">
         <div>
-          <span className="text-[11px] font-bold text-indigo-600 uppercase tracking-wider">
-            {product.category_name || 'English Department'}
-          </span>
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold text-indigo-600 uppercase tracking-wider">
+              {product.category_name || 'English Department'}
+            </span>
+            {isAdmin && (
+              <span className="text-[9px] font-black bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded">
+                Admin Düzenlenebilir
+              </span>
+            )}
+          </div>
           <h3 className="text-base font-bold text-slate-900 mt-1 line-clamp-1 group-hover:text-indigo-600 transition">
             {product.name}
           </h3>

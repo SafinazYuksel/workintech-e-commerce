@@ -10,11 +10,15 @@ import {
   Eye,
   Check,
   Loader2,
-  ArrowLeft
+  ArrowLeft,
+  Shield,
+  Edit,
+  Trash2
 } from 'lucide-react';
-import { fetchProductDetail } from '../store/actions/productActions';
+import { fetchProductDetail, deleteProduct } from '../store/actions/productActions';
 import { addToCart } from '../store/actions/shoppingCartActions';
 import ClientsSection from '../components/ClientsSection';
+import AdminProductModal from '../components/AdminProductModal';
 import { toast } from 'react-toastify';
 
 const bestsellerProducts = [
@@ -89,6 +93,9 @@ export default function ProductDetailPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const user = useSelector((state) => state.client.user);
+  const isAdmin = user && (user.role_id === 1 || user.role === 'admin');
+
   const product = useSelector((state) => state.product.product);
   const fetchState = useSelector((state) => state.product.fetchState);
 
@@ -96,6 +103,7 @@ export default function ProductDetailPage() {
   const [activeTab, setActiveTab] = useState('description');
   const [addedToCart, setAddedToCart] = useState(false);
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
 
   useEffect(() => {
     if (productId) {
@@ -321,9 +329,51 @@ export default function ProductDetailPage() {
                 <Eye className="w-4 h-4" />
               </button>
             </div>
+
+            {/* Admin Management Action Box */}
+            {isAdmin && (
+              <div className="mt-8 p-5 bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm animate-fadeIn">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-purple-700 text-white flex items-center justify-center shrink-0 shadow">
+                    <Shield className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-extrabold text-purple-950">🛡️ Yönetici Yetkisi: Ürün Yönetimi</h4>
+                    <p className="text-[11px] text-purple-700">Bu ürünü doğrudan güncelleyebilir veya sistemden silebilirsiniz.</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2.5 shrink-0">
+                  <button
+                    onClick={() => setIsAdminModalOpen(true)}
+                    className="bg-purple-700 hover:bg-purple-800 text-white text-xs font-extrabold px-4 py-2.5 rounded-xl flex items-center gap-1.5 shadow-md transition"
+                  >
+                    <Edit className="w-3.5 h-3.5 text-purple-200" /> Ürünü Düzenle (Admin)
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (window.confirm('Bu ürünü sistemden silmek istediğinize emin misiniz?')) {
+                        dispatch(deleteProduct(product.id));
+                        toast.success('Ürün başarıyla silindi! (Admin)');
+                        navigate('/shop');
+                      }
+                    }}
+                    className="bg-red-600 hover:bg-red-700 text-white text-xs font-extrabold px-4 py-2.5 rounded-xl flex items-center gap-1.5 shadow-md transition"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" /> Ürünü Sil
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
+
+      {/* Admin Edit Modal */}
+      <AdminProductModal
+        isOpen={isAdminModalOpen}
+        onClose={() => setIsAdminModalOpen(false)}
+        initialProduct={product}
+      />
 
       {/* 3. Description Tabs Bar matching desktop-product-1 & desktop-product-2 */}
       <div className="border-t border-gray-100 mt-16">
