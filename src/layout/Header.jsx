@@ -205,15 +205,15 @@ export default function Header() {
           <Link to="/about" className="hover:text-[#252B42] transition">
             About
           </Link>
-          <a href="#blog" className="hover:text-[#252B42] transition">
+          <Link to="/blog" className="hover:text-[#252B42] transition">
             Blog
-          </a>
+          </Link>
+          <Link to="/pricing" className="hover:text-[#252B42] transition">
+            Pricing
+          </Link>
           <Link to="/contact" className="hover:text-[#252B42] transition">
             Contact
           </Link>
-          <a href="#pages" className="hover:text-[#252B42] transition">
-            Pages
-          </a>
         </nav>
 
         {/* Right Desktop Actions & User Info */}
@@ -414,7 +414,7 @@ export default function Header() {
             Product
           </Link>
           <Link
-            to="/about"
+            to="/pricing"
             onClick={() => setIsMobileMenuOpen(false)}
             className="text-[#737373] text-2xl font-normal hover:text-[#252B42] transition"
           >
