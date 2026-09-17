@@ -76,16 +76,16 @@ export default function ShoppingCartPage() {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 max-w-lg mx-auto flex flex-col items-center">
-          <div className="w-20 h-20 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mb-6">
+          <div className="w-20 h-20 bg-blue-50 text-[#23A6F0] rounded-full flex items-center justify-center mb-6">
             <CartIcon className="w-10 h-10" />
           </div>
-          <h2 className="text-2xl font-bold text-slate-900 mb-2">Sepetiniz Henüz Boş</h2>
-          <p className="text-slate-500 text-sm mb-8">
+          <h2 className="text-2xl font-bold text-[#252B42] mb-2">Sepetiniz Henüz Boş</h2>
+          <p className="text-[#737373] text-sm mb-8">
             Harika ürünlerimizi keşfetmek ve sepetinizi doldurmak için hemen alışverişe başlayın!
           </p>
           <Link
             to="/shop"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-xl shadow-md transition duration-200"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-[#23A6F0] hover:bg-[#1b8bc9] text-white font-semibold rounded-xl shadow-md transition duration-200"
           >
             <ArrowLeft className="w-4 h-4" /> Alışverişe Başla (Go to Shop)
           </Link>
@@ -95,20 +95,20 @@ export default function ShoppingCartPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 font-sans">
       {/* Breadcrumb & Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-black text-[#252B42] tracking-tight">
             Sepetim ({cart.length} Ürün)
           </h1>
-          <p className="text-slate-500 text-xs sm:text-sm mt-1">
+          <p className="text-[#737373] text-xs sm:text-sm mt-1">
             Seçili ürünlerinizi kontrol edip siparişinizi tamamlayabilirsiniz.
           </p>
         </div>
         <button
           onClick={() => navigate('/shop')}
-          className="inline-flex items-center gap-2 text-sm font-semibold text-orange-600 hover:text-orange-700 transition"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-[#23A6F0] hover:text-[#1b8bc9] transition"
         >
           <ArrowLeft className="w-4 h-4" /> Alışverişe Devam Et
         </button>
@@ -125,15 +125,15 @@ export default function ShoppingCartPage() {
                   type="checkbox"
                   checked={isAllChecked}
                   onChange={handleToggleAll}
-                  className="w-4 h-4 text-orange-600 rounded border-gray-300 focus:ring-orange-500 cursor-pointer"
+                  className="w-4 h-4 text-[#23A6F0] rounded border-gray-300 focus:ring-[#23A6F0] cursor-pointer"
                 />
-                <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                <span className="text-xs font-bold text-[#252B42] uppercase tracking-wider">
                   Tümünü Seç ({checkedItems.length}/{cart.length})
                 </span>
               </label>
 
               {checkedItems.length > 0 && (
-                <span className="text-xs text-orange-600 font-semibold bg-orange-50 px-2.5 py-1 rounded-md border border-orange-100">
+                <span className="text-xs text-[#23A6F0] font-semibold bg-blue-50 px-2.5 py-1 rounded-md border border-blue-100">
                   {checkedItems.length} ürün seçildi
                 </span>
               )}
@@ -143,7 +143,7 @@ export default function ShoppingCartPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-slate-50/50 text-[11px] font-extrabold text-slate-400 uppercase tracking-wider border-b border-gray-100">
+                  <tr className="bg-slate-50/50 text-[11px] font-extrabold text-[#737373] uppercase tracking-wider border-b border-gray-100">
                     <th className="py-3 px-4 w-10 text-center">Seç</th>
                     <th className="py-3 px-4">Ürün Bilgisi</th>
                     <th className="py-3 px-4 text-center">Birim Fiyat</th>
@@ -176,7 +176,7 @@ export default function ShoppingCartPage() {
                             type="checkbox"
                             checked={isChecked}
                             onChange={() => dispatch(toggleCartItemCheck(product.id))}
-                            className="w-4 h-4 text-orange-600 rounded border-gray-300 focus:ring-orange-500 cursor-pointer"
+                            className="w-4 h-4 text-[#23A6F0] rounded border-gray-300 focus:ring-[#23A6F0] cursor-pointer"
                           />
                         </td>
 
@@ -189,13 +189,13 @@ export default function ShoppingCartPage() {
                               className="w-16 h-16 object-cover rounded-lg border border-gray-200 flex-shrink-0"
                             />
                             <div className="min-w-0">
-                              <h4 className="font-bold text-slate-900 text-sm truncate max-w-xs sm:max-w-sm">
+                              <h4 className="font-bold text-[#252B42] text-sm truncate max-w-xs sm:max-w-sm">
                                 {product.name}
                               </h4>
-                              <p className="text-xs text-slate-500 mt-0.5 line-clamp-1">
+                              <p className="text-xs text-[#737373] mt-0.5 line-clamp-1">
                                 {product.description || `Ürün Kodu: #${product.id}`}
                               </p>
-                              <span className="inline-block text-[10px] font-semibold text-slate-400 mt-1 bg-slate-100 px-1.5 py-0.5 rounded">
+                              <span className="inline-block text-[10px] font-semibold text-[#737373] mt-1 bg-slate-100 px-1.5 py-0.5 rounded">
                                 Stok: {product.stock || 50}
                               </span>
                             </div>
@@ -203,7 +203,7 @@ export default function ShoppingCartPage() {
                         </td>
 
                         {/* Unit Price */}
-                        <td className="py-4 px-4 text-center font-medium text-slate-700 whitespace-nowrap">
+                        <td className="py-4 px-4 text-center font-medium text-[#252B42] whitespace-nowrap">
                           ₺{price.toLocaleString('tr-TR', { minimumFractionDigits: 2 })}
                         </td>
 
@@ -212,17 +212,17 @@ export default function ShoppingCartPage() {
                           <div className="inline-flex items-center border border-gray-200 rounded-lg overflow-hidden bg-white shadow-sm">
                             <button
                               onClick={() => dispatch(updateCartItemCount(product.id, count - 1))}
-                              className="p-1.5 text-slate-500 hover:text-orange-600 hover:bg-slate-50 transition border-r border-gray-100"
+                              className="p-1.5 text-[#737373] hover:text-[#23A6F0] hover:bg-slate-50 transition border-r border-gray-100"
                               title="Adet Azalt"
                             >
                               <Minus className="w-3.5 h-3.5" />
                             </button>
-                            <span className="w-8 text-center font-bold text-xs text-slate-800">
+                            <span className="w-8 text-center font-bold text-xs text-[#252B42]">
                               {count}
                             </span>
                             <button
                               onClick={() => dispatch(updateCartItemCount(product.id, count + 1))}
-                              className="p-1.5 text-slate-500 hover:text-orange-600 hover:bg-slate-50 transition border-l border-gray-100"
+                              className="p-1.5 text-[#737373] hover:text-[#23A6F0] hover:bg-slate-50 transition border-l border-gray-100"
                               title="Adet Artır"
                             >
                               <Plus className="w-3.5 h-3.5" />
@@ -231,7 +231,7 @@ export default function ShoppingCartPage() {
                         </td>
 
                         {/* Item Subtotal */}
-                        <td className="py-4 px-4 text-right font-black text-orange-600 whitespace-nowrap">
+                        <td className="py-4 px-4 text-right font-black text-[#23A6F0] whitespace-nowrap">
                           ₺{itemTotal.toLocaleString('tr-TR', { minimumFractionDigits: 2 })}
                         </td>
 
@@ -239,7 +239,7 @@ export default function ShoppingCartPage() {
                         <td className="py-4 px-4 text-center whitespace-nowrap">
                           <button
                             onClick={() => handleRemove(product.id, product.name)}
-                            className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
+                            className="p-2 text-[#737373] hover:text-red-600 hover:bg-red-50 rounded-lg transition"
                             title="Ürünü Sil"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -254,7 +254,7 @@ export default function ShoppingCartPage() {
           </div>
         </div>
 
-        {/* Right Column (1 Col): T19 Order Summary Box */}
+        {/* Right Column (1 Col): Order Summary Box */}
         <div className="lg:col-span-1 space-y-4">
           {/* Top Primary "Create Order" Button */}
           <button
@@ -262,7 +262,7 @@ export default function ShoppingCartPage() {
             disabled={checkedItems.length === 0}
             className={`w-full py-3.5 px-6 rounded-xl font-bold text-white text-center text-base shadow-md transition duration-200 flex items-center justify-center gap-2 ${
               checkedItems.length > 0
-                ? 'bg-orange-500 hover:bg-orange-600 shadow-orange-100 cursor-pointer'
+                ? 'bg-[#23A6F0] hover:bg-[#1b8bc9] shadow-blue-100 cursor-pointer'
                 : 'bg-gray-300 cursor-not-allowed shadow-none'
             }`}
           >
@@ -271,31 +271,31 @@ export default function ShoppingCartPage() {
 
           {/* Order Summary Card Container */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-5">
-            <h3 className="text-lg font-bold text-slate-900 border-b border-gray-100 pb-3">
+            <h3 className="text-lg font-bold text-[#252B42] border-b border-gray-100 pb-3">
               Sipariş Özeti (Order Summary)
             </h3>
 
             {/* Line Items */}
             <div className="space-y-3 text-sm">
               {/* Products Total Price */}
-              <div className="flex justify-between text-slate-600">
+              <div className="flex justify-between text-[#737373]">
                 <span>Ürünün Toplamı</span>
-                <span className="font-bold text-slate-800">
+                <span className="font-bold text-[#252B42]">
                   ₺{productsSubtotal.toLocaleString('tr-TR', { minimumFractionDigits: 2 })}
                 </span>
               </div>
 
               {/* Shipping Payment Price */}
-              <div className="flex justify-between text-slate-600">
+              <div className="flex justify-between text-[#737373]">
                 <span>Kargo Toplam</span>
-                <span className="font-bold text-slate-800">
+                <span className="font-bold text-[#252B42]">
                   ₺{shippingPrice.toFixed(2)}
                 </span>
               </div>
 
               {/* Shipping Discount (-29.99 TL if >= 150 TL) */}
               {shippingDiscount > 0 && (
-                <div className="flex justify-between text-xs text-emerald-600 font-semibold">
+                <div className="flex justify-between text-xs text-[#2DC071] font-semibold">
                   <span>150 TL ve Üzeri Kargo Bedava (Satıcı Karşılar)</span>
                   <span>-₺{shippingDiscount.toFixed(2)}</span>
                 </div>
@@ -303,7 +303,7 @@ export default function ShoppingCartPage() {
 
               {/* Applied Promo Code Discount */}
               {appliedDiscount > 0 && (
-                <div className="flex justify-between text-xs text-emerald-600 font-semibold">
+                <div className="flex justify-between text-xs text-[#2DC071] font-semibold">
                   <span>İndirim Kodu Uyum İndirimi</span>
                   <span>-₺{appliedDiscount.toLocaleString('tr-TR', { minimumFractionDigits: 2 })}</span>
                 </div>
@@ -311,8 +311,8 @@ export default function ShoppingCartPage() {
 
               {/* Grand Total Price */}
               <div className="border-t border-gray-100 pt-4 flex justify-between items-baseline">
-                <span className="text-base font-black text-slate-900">Grand Total (Toplam)</span>
-                <span className="text-2xl font-black text-orange-600">
+                <span className="text-base font-black text-[#252B42]">Grand Total (Toplam)</span>
+                <span className="text-2xl font-black text-[#23A6F0]">
                   ₺{grandTotal.toLocaleString('tr-TR', { minimumFractionDigits: 2 })}
                 </span>
               </div>
@@ -323,9 +323,9 @@ export default function ShoppingCartPage() {
               {!showPromoInput ? (
                 <button
                   onClick={() => setShowPromoInput(true)}
-                  className="w-full py-2.5 px-4 border border-dashed border-gray-300 hover:border-orange-500 rounded-xl text-xs font-bold text-slate-600 hover:text-orange-600 transition flex items-center justify-center gap-2 bg-slate-50/50"
+                  className="w-full py-2.5 px-4 border border-dashed border-gray-300 hover:border-[#23A6F0] rounded-xl text-xs font-bold text-[#737373] hover:text-[#23A6F0] transition flex items-center justify-center gap-2 bg-slate-50/50"
                 >
-                  <Tag className="w-3.5 h-3.5 text-orange-500" /> + İNDİRİM KODU GİR
+                  <Tag className="w-3.5 h-3.5 text-[#23A6F0]" /> + İNDİRİM KODU GİR
                 </button>
               ) : (
                 <form onSubmit={handleApplyPromo} className="flex gap-2">
@@ -334,11 +334,11 @@ export default function ShoppingCartPage() {
                     placeholder="İndirim kodu (örn: INDIRIM10)"
                     value={promoCode}
                     onChange={(e) => setPromoCode(e.target.value)}
-                    className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-orange-500"
+                    className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#23A6F0]"
                   />
                   <button
                     type="submit"
-                    className="px-3 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-bold transition"
+                    className="px-3 py-2 bg-[#252B42] hover:bg-[#1a1e2e] text-white rounded-lg text-xs font-bold transition"
                   >
                     Uygula
                   </button>
@@ -353,7 +353,7 @@ export default function ShoppingCartPage() {
             disabled={checkedItems.length === 0}
             className={`w-full py-3.5 px-6 rounded-xl font-bold text-white text-center text-base shadow-md transition duration-200 flex items-center justify-center gap-2 ${
               checkedItems.length > 0
-                ? 'bg-orange-500 hover:bg-orange-600 shadow-orange-100 cursor-pointer'
+                ? 'bg-[#23A6F0] hover:bg-[#1b8bc9] shadow-blue-100 cursor-pointer'
                 : 'bg-gray-300 cursor-not-allowed shadow-none'
             }`}
           >
@@ -361,8 +361,8 @@ export default function ShoppingCartPage() {
           </button>
 
           {/* Security Note */}
-          <div className="flex items-center gap-2 text-xs text-slate-400 justify-center pt-1">
-            <ShieldCheck className="w-4 h-4 text-emerald-500" />
+          <div className="flex items-center gap-2 text-xs text-[#737373] justify-center pt-1">
+            <ShieldCheck className="w-4 h-4 text-[#2DC071]" />
             <span>256-bit SSL ile %100 Güvenli Alışveriş</span>
           </div>
         </div>
@@ -370,3 +370,4 @@ export default function ShoppingCartPage() {
     </div>
   );
 }
+
