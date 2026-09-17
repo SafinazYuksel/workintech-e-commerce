@@ -3,6 +3,7 @@ import Slider from '../components/Slider';
 import ProductCard from '../components/ProductCard';
 import ShopCards from '../components/ShopCards';
 import FeaturedProductSection from '../components/FeaturedProductSection';
+import FeaturesSection from '../components/FeaturesSection';
 
 const sampleProducts = [
   {
@@ -61,6 +62,9 @@ export default function HomePage() {
 
       {/* Featured Products Banner & Cards (desktop-product-cards-1 & mobile-product-cards-1) */}
       <FeaturedProductSection />
+
+      {/* Features Section (desktop-features-1 & mobile-features-1) */}
+      <FeaturesSection />
 
       {/* Editors Pick / Categories */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center w-full">
