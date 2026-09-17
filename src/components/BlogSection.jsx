@@ -83,8 +83,8 @@ export default function BlogSection({ limit }) {
         </p>
       </div>
 
-      {/* Blog Cards Grid: 2 columns on Desktop (matching desktop-blog-1), 1 column on Mobile (matching mobile-blog-1) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      {/* Blog Cards Grid: 3 columns when limit=3 (matching ecommerce-desktop-5), 2 columns on blog page */}
+      <div className={`grid grid-cols-1 ${postsToDisplay.length === 3 ? 'md:grid-cols-3' : 'md:grid-cols-2'} gap-8`}>
         {postsToDisplay.map((post) => (
           <div
             key={post.id}
