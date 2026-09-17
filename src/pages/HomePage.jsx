@@ -5,6 +5,7 @@ import ShopCards from '../components/ShopCards';
 import FeaturedProductSection from '../components/FeaturedProductSection';
 import FeaturesSection from '../components/FeaturesSection';
 import CtaSection from '../components/CtaSection';
+import SubscriptionSection from '../components/SubscriptionSection';
 
 const sampleProducts = [
   {
@@ -66,6 +67,9 @@ export default function HomePage() {
 
       {/* Features Section (desktop-features-1 & mobile-features-1) */}
       <FeaturesSection />
+
+      {/* Subscription Section (desktop-subscription-1 & mobile-subscription-1) */}
+      <SubscriptionSection />
 
       {/* CTA Section (desktop-cta-1 & mobile-cta-1) */}
       <CtaSection />
