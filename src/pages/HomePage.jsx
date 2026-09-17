@@ -2,6 +2,7 @@ import React from 'react';
 import Slider from '../components/Slider';
 import ProductCard from '../components/ProductCard';
 import ShopCards from '../components/ShopCards';
+import FeaturedProductSection from '../components/FeaturedProductSection';
 
 const sampleProducts = [
   {
@@ -57,6 +58,9 @@ export default function HomePage() {
 
       {/* Promotional Shop Cards (desktop-shop-cards-1 & mobile-shop-cards-1) */}
       <ShopCards />
+
+      {/* Featured Products Banner & Cards (desktop-product-cards-1 & mobile-product-cards-1) */}
+      <FeaturedProductSection />
 
       {/* Editors Pick / Categories */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center w-full">
