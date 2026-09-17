@@ -70,7 +70,7 @@ export default function SignUpPage() {
         name: data.name,
         email: data.email,
         password: data.password,
-        role_id: data.role_id
+        role_id: data.role_id || 3
       };
 
       await API.post('/signup', payload);
@@ -210,31 +210,8 @@ export default function SignUpPage() {
               )}
             </div>
 
-            {/* Role selection */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Rol (Role) *
-              </label>
-              <div className="mt-1">
-                {loadingRoles ? (
-                  <p className="text-sm text-gray-500">Roller yükleniyor...</p>
-                ) : (
-                  <select
-                    {...register('role_id', { required: 'Lütfen bir rol seçiniz.' })}
-                    className="block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  >
-                    {roles.map((role) => (
-                      <option key={role.id} value={role.id}>
-                        {role.name}
-                      </option>
-                    ))}
-                  </select>
-                )}
-              </div>
-              {errors.role_id && (
-                <p className="mt-1 text-xs text-red-600">{errors.role_id.message}</p>
-              )}
-            </div>
+            {/* Hidden Role Input - Automatically assigned as Customer */}
+            <input type="hidden" {...register('role_id')} />
 
 
 
