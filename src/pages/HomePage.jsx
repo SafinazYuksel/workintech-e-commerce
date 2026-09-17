@@ -10,6 +10,7 @@ import SubscriptionSection from '../components/SubscriptionSection';
 import ClientsSection from '../components/ClientsSection';
 import BlogSection from '../components/BlogSection';
 import TestimonialsSection from '../components/TestimonialsSection';
+import ContentSection from '../components/ContentSection';
 
 const sampleProducts = [
   {
@@ -77,6 +78,9 @@ export default function HomePage() {
 
       {/* Video Banner Section (desktop-video-1 & mobile-video-1) */}
       <VideoSection />
+
+      {/* Designing Better Experience Showcase (desktop-content-1 & mobile-content-1) */}
+      <ContentSection />
 
       {/* Stats Section (desktop-stats-1 & mobile-stats-1) */}
       <StatsSection />
