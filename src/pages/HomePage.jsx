@@ -4,6 +4,7 @@ import ProductCard from '../components/ProductCard';
 import ShopCards from '../components/ShopCards';
 import FeaturedProductSection from '../components/FeaturedProductSection';
 import FeaturesSection from '../components/FeaturesSection';
+import StatsSection from '../components/StatsSection';
 import SubscriptionSection from '../components/SubscriptionSection';
 
 const sampleProducts = [
@@ -66,6 +67,9 @@ export default function HomePage() {
 
       {/* Features Section (desktop-features-1 & mobile-features-1) */}
       <FeaturesSection />
+
+      {/* Stats Section (desktop-stats-1 & mobile-stats-1) */}
+      <StatsSection />
 
       {/* Subscription Section (desktop-subscription-1 & mobile-subscription-1) */}
       <SubscriptionSection />
