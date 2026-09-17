@@ -13,7 +13,8 @@ import {
   Phone,
   Mail,
   Menu,
-  X
+  X,
+  Shield
 } from 'lucide-react';
 import { logout } from '../store/actions/clientActions';
 
@@ -278,17 +279,36 @@ export default function Header() {
                 )}
                 <span className="text-xs font-bold text-[#23A6F0] flex items-center gap-1">
                   {user.name || user.email?.split('@')[0]}
-                  <ChevronDown className="w-3.5 h-3.5" />
+                  {(user.role_id === 1 || user.role === 'admin') && (
+                    <span className="bg-purple-100 text-purple-700 text-[10px] font-extrabold px-1.5 py-0.5 rounded border border-purple-200 ml-1">
+                      Admin
+                    </span>
+                  )}
+                  <ChevronDown className="w-3.5 h-3.5 ml-0.5" />
                 </span>
               </button>
 
               {/* User Dropdown Menu */}
               {isUserMenuOpen && (
-                <div className="absolute top-full right-0 w-52 bg-white border border-gray-100 shadow-xl rounded-xl py-2 z-50 animate-fadeIn">
+                <div className="absolute top-full right-0 w-56 bg-white border border-gray-100 shadow-xl rounded-xl py-2 z-50 animate-fadeIn">
                   <div className="px-4 py-2 border-b border-gray-50 text-xs">
-                    <p className="font-bold text-[#252B42] truncate">{user.name || 'Kullanıcı'}</p>
+                    <div className="flex items-center justify-between gap-1 mb-0.5">
+                      <p className="font-bold text-[#252B42] truncate">{user.name || 'Kullanıcı'}</p>
+                      {(user.role_id === 1 || user.role === 'admin') && (
+                        <span className="bg-purple-100 text-purple-700 text-[10px] font-extrabold px-1.5 py-0.5 rounded border border-purple-200 shrink-0">
+                          Yönetici
+                        </span>
+                      )}
+                    </div>
                     <p className="text-[11px] text-[#737373] truncate">{user.email}</p>
                   </div>
+
+                  {(user.role_id === 1 || user.role === 'admin') && (
+                    <div className="px-4 py-2 bg-purple-50/80 border-b border-purple-100 flex items-center gap-1.5 text-[11px] text-purple-800 font-semibold">
+                      <Shield className="w-3.5 h-3.5 text-purple-600 shrink-0" />
+                      <span>Tam Sistem Yetkisi Aktif</span>
+                    </div>
+                  )}
 
                   <Link
                     to="/orders"

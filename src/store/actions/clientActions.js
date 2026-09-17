@@ -44,8 +44,9 @@ export const loginUser = (credentials, rememberMe, navigate) => async (dispatch)
     }
     API.defaults.headers.common['Authorization'] = adminData.token;
     toast.success('Yönetici (Admin) olarak başarıyla giriş yapıldı!');
+    // Redirect user to homepage
     if (navigate) {
-      navigate(-1);
+      navigate('/');
     }
     return { success: true, data: adminData };
   }
@@ -67,9 +68,9 @@ export const loginUser = (credentials, rememberMe, navigate) => async (dispatch)
 
     toast.success('Giriş başarılı!');
 
-    // Redirect user to previous page, if none navigate to home
+    // Redirect user to homepage
     if (navigate) {
-      navigate(-1);
+      navigate('/');
     }
     return { success: true, data: userData };
   } catch (error) {
