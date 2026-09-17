@@ -117,7 +117,7 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
         {/* Brand Logo */}
         <Link to="/" className="text-2xl font-bold text-[#252B42] tracking-tight">
-          Bandage
+          BrandName
         </Link>
 
         {/* Desktop Navigation Links */}
