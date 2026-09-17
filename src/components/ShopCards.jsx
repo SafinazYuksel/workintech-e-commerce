@@ -1,65 +1,66 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+const categories = [
+  {
+    id: 1,
+    title: 'CLOTHS',
+    count: '5 Items',
+    image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=600&q=80'
+  },
+  {
+    id: 2,
+    title: 'CLOTHS',
+    count: '5 Items',
+    image: 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=600&q=80'
+  },
+  {
+    id: 3,
+    title: 'CLOTHS',
+    count: '5 Items',
+    image: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=600&q=80'
+  },
+  {
+    id: 4,
+    title: 'CLOTHS',
+    count: '5 Items',
+    image: 'https://images.unsplash.com/photo-1539533018447-63fcce2678e3?auto=format&fit=crop&w=600&q=80'
+  },
+  {
+    id: 5,
+    title: 'CLOTHS',
+    count: '5 Items',
+    image: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=600&q=80'
+  }
+];
+
 export default function ShopCards() {
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full font-sans">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Card 1: Elements Of Style */}
-        <div className="bg-[#FAF9F5] rounded-xl p-8 sm:p-10 flex flex-col sm:flex-row items-center justify-between overflow-hidden shadow-sm relative group cursor-pointer border border-gray-100">
-          <div className="flex flex-col items-start text-left z-10 max-w-xs space-y-3">
-            <span className="text-xs font-bold text-[#E77C40] tracking-wider uppercase">
-              Ends Today
-            </span>
-            <h3 className="text-2xl sm:text-3xl font-black text-[#252B42] leading-tight">
-              Elements Of Style
-            </h3>
-            <p className="text-xs sm:text-sm text-[#737373] font-medium">
-              Top Ten Products of the Week
-            </p>
-            <Link
-              to="/shop"
-              className="pt-2 text-xs sm:text-sm font-bold text-[#252B42] hover:text-[#23A6F0] underline underline-offset-4 transition"
-            >
-              Explore Items
-            </Link>
-          </div>
-          <div className="mt-6 sm:mt-0 z-0 flex-shrink-0">
+    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full font-sans">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
+        {categories.map((cat) => (
+          <Link
+            key={cat.id}
+            to="/shop"
+            className="relative h-60 rounded-xl overflow-hidden group shadow-sm border border-gray-100 flex items-center justify-center text-white text-center cursor-pointer"
+          >
             <img
-              src="https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=400&q=80"
-              alt="Elements Of Style - Smartwatch"
-              className="w-48 h-48 sm:w-56 sm:h-56 object-contain group-hover:scale-105 transition duration-500"
+              src={cat.image}
+              alt={cat.title}
+              className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
             />
-          </div>
-        </div>
+            <div className="absolute inset-0 bg-slate-900/40 group-hover:bg-slate-900/50 transition-colors" />
 
-        {/* Card 2: Unique Life */}
-        <div className="bg-[#23A6F0] text-white rounded-xl p-8 sm:p-10 flex flex-col sm:flex-row items-center justify-between overflow-hidden shadow-sm relative group cursor-pointer">
-          <div className="flex flex-col items-start text-left z-10 max-w-xs space-y-3">
-            <span className="text-xs font-bold text-white tracking-wider uppercase">
-              Your Space
-            </span>
-            <h3 className="text-2xl sm:text-3xl font-black text-white leading-tight">
-              Unique Life
-            </h3>
-            <p className="text-xs sm:text-sm text-white/90 font-medium">
-              Top Ten Products of the Week
-            </p>
-            <Link
-              to="/shop"
-              className="pt-2 text-xs sm:text-sm font-bold text-white hover:text-slate-100 underline underline-offset-4 transition"
-            >
-              Explore Items
-            </Link>
-          </div>
-          <div className="mt-6 sm:mt-0 z-0 flex-shrink-0">
-            <img
-              src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=400&q=80"
-              alt="Unique Life - Smartphone"
-              className="w-48 h-48 sm:w-56 sm:h-56 object-contain group-hover:scale-105 transition duration-500"
-            />
-          </div>
-        </div>
+            <div className="relative z-10 space-y-1">
+              <h3 className="font-extrabold text-base uppercase tracking-wider text-white">
+                {cat.title}
+              </h3>
+              <p className="text-xs font-semibold text-white/90">
+                {cat.count}
+              </p>
+            </div>
+          </Link>
+        ))}
       </div>
     </section>
   );
