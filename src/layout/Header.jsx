@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import md5 from 'md5';
 import {
   LogOut,
@@ -44,6 +44,9 @@ const TwitterIcon = () => (
 export default function Header() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+  const pathname = location.pathname;
+
   const user = useSelector((state) => state.client.user);
   const cart = useSelector((state) => state.shoppingCart.cart);
   const categories = useSelector((state) => state.product.categories);
@@ -55,6 +58,17 @@ export default function Header() {
 
   const totalCartItems = cart ? cart.reduce((acc, item) => acc + item.count, 0) : 0;
   const isLoggedIn = user && (user.email || user.name);
+
+  // Active Link Helper
+  const isLinkActive = (path) => {
+    if (path === '/') {
+      return pathname === '/';
+    }
+    if (path === '/shop') {
+      return pathname.startsWith('/shop') || pathname.startsWith('/product');
+    }
+    return pathname.startsWith(path);
+  };
 
   // Gravatar URL generation
   const emailHash = user?.email ? md5(user.email.trim().toLowerCase()) : '';
@@ -120,13 +134,18 @@ export default function Header() {
           BrandName
         </Link>
 
-        {/* Desktop Navigation Links */}
-        <nav className="hidden md:flex items-center space-x-6 text-sm font-bold text-[#737373]">
-          <Link to="/" className="hover:text-[#252B42] transition">
+        {/* Desktop Navigation Links with Dynamic Active Styling */}
+        <nav className="hidden md:flex items-center space-x-6 text-sm font-bold">
+          <Link
+            to="/"
+            className={`transition ${
+              isLinkActive('/') ? 'text-[#252B42] font-extrabold' : 'text-[#737373] hover:text-[#252B42]'
+            }`}
+          >
             Home
           </Link>
 
-          {/* Shop Dropdown Menu (T12) */}
+          {/* Shop Dropdown Menu */}
           <div
             className="relative"
             onMouseEnter={() => setIsShopMenuOpen(true)}
@@ -134,9 +153,11 @@ export default function Header() {
           >
             <Link
               to="/shop"
-              className="hover:text-[#252B42] transition flex items-center gap-1 py-4 text-[#252B42]"
+              className={`transition flex items-center gap-1 py-4 ${
+                isLinkActive('/shop') ? 'text-[#252B42] font-extrabold' : 'text-[#737373] hover:text-[#252B42]'
+              }`}
             >
-              Shop <ChevronDown className="w-4 h-4 text-[#252B42]" />
+              Shop <ChevronDown className={`w-4 h-4 ${isLinkActive('/shop') ? 'text-[#252B42]' : 'text-[#737373]'}`} />
             </Link>
 
             {/* Dropdown Container */}
@@ -202,16 +223,36 @@ export default function Header() {
             )}
           </div>
 
-          <Link to="/about" className="hover:text-[#252B42] transition">
+          <Link
+            to="/about"
+            className={`transition ${
+              isLinkActive('/about') ? 'text-[#252B42] font-extrabold' : 'text-[#737373] hover:text-[#252B42]'
+            }`}
+          >
             About
           </Link>
-          <Link to="/blog" className="hover:text-[#252B42] transition">
+          <Link
+            to="/blog"
+            className={`transition ${
+              isLinkActive('/blog') ? 'text-[#252B42] font-extrabold' : 'text-[#737373] hover:text-[#252B42]'
+            }`}
+          >
             Blog
           </Link>
-          <Link to="/pricing" className="hover:text-[#252B42] transition">
+          <Link
+            to="/pricing"
+            className={`transition ${
+              isLinkActive('/pricing') ? 'text-[#252B42] font-extrabold' : 'text-[#737373] hover:text-[#252B42]'
+            }`}
+          >
             Pricing
           </Link>
-          <Link to="/contact" className="hover:text-[#252B42] transition">
+          <Link
+            to="/contact"
+            className={`transition ${
+              isLinkActive('/contact') ? 'text-[#252B42] font-extrabold' : 'text-[#737373] hover:text-[#252B42]'
+            }`}
+          >
             Contact
           </Link>
         </nav>
@@ -284,7 +325,7 @@ export default function Header() {
             <Search className="w-4 h-4" />
           </button>
 
-          {/* Cart Icon & Dropdown (T17) */}
+          {/* Cart Icon & Dropdown */}
           <div
             className="relative"
             onMouseEnter={() => setIsCartMenuOpen(true)}
@@ -344,7 +385,6 @@ export default function Header() {
                       })}
                     </div>
 
-                    {/* Action Buttons matching T17 mockup */}
                     <div className="grid grid-cols-2 gap-3 border-t border-gray-100 pt-4 mt-3">
                       <Link
                         to="/cart"
@@ -374,7 +414,7 @@ export default function Header() {
           </button>
         </div>
 
-        {/* Mobile Header Right Items (mobile-shop-header-1) */}
+        {/* Mobile Header Right Items */}
         <div className="flex md:hidden items-center space-x-4">
           <button className="text-[#252B42] p-1">
             <Search className="w-5 h-5" />
@@ -396,34 +436,60 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile Drawer Menu (mobile-shop-header-1 specs: Home, Product, Pricing, Contact) */}
+      {/* Mobile Drawer Menu */}
       {isMobileMenuOpen && (
         <div className="md:hidden bg-white border-t border-gray-100 py-8 px-6 space-y-6 text-center flex flex-col items-center animate-fadeIn">
           <Link
             to="/"
             onClick={() => setIsMobileMenuOpen(false)}
-            className="text-[#737373] text-2xl font-normal hover:text-[#252B42] transition"
+            className={`text-2xl transition ${
+              isLinkActive('/') ? 'text-[#252B42] font-bold' : 'text-[#737373] font-normal hover:text-[#252B42]'
+            }`}
           >
             Home
           </Link>
           <Link
             to="/shop"
             onClick={() => setIsMobileMenuOpen(false)}
-            className="text-[#252B42] text-2xl font-medium hover:text-[#23A6F0] transition"
+            className={`text-2xl transition ${
+              isLinkActive('/shop') ? 'text-[#252B42] font-bold' : 'text-[#737373] font-normal hover:text-[#252B42]'
+            }`}
           >
-            Product
+            Shop
+          </Link>
+          <Link
+            to="/about"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className={`text-2xl transition ${
+              isLinkActive('/about') ? 'text-[#252B42] font-bold' : 'text-[#737373] hover:text-[#252B42]'
+            }`}
+          >
+            About
+          </Link>
+          <Link
+            to="/blog"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className={`text-2xl transition ${
+              isLinkActive('/blog') ? 'text-[#252B42] font-bold' : 'text-[#737373] hover:text-[#252B42]'
+            }`}
+          >
+            Blog
           </Link>
           <Link
             to="/pricing"
             onClick={() => setIsMobileMenuOpen(false)}
-            className="text-[#737373] text-2xl font-normal hover:text-[#252B42] transition"
+            className={`text-2xl transition ${
+              isLinkActive('/pricing') ? 'text-[#252B42] font-bold' : 'text-[#737373] font-normal hover:text-[#252B42]'
+            }`}
           >
             Pricing
           </Link>
           <Link
             to="/contact"
             onClick={() => setIsMobileMenuOpen(false)}
-            className="text-[#737373] text-2xl font-normal hover:text-[#252B42] transition"
+            className={`text-2xl transition ${
+              isLinkActive('/contact') ? 'text-[#252B42] font-bold' : 'text-[#737373] font-normal hover:text-[#252B42]'
+            }`}
           >
             Contact
           </Link>
@@ -463,3 +529,4 @@ export default function Header() {
     </header>
   );
 }
+
