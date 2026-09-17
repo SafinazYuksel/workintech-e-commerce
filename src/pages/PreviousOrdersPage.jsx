@@ -158,7 +158,7 @@ export default function PreviousOrdersPage() {
                       Alıcı / Kart
                     </span>
                     <span className="text-xs font-semibold text-slate-700 truncate block mt-0.5">
-                      {order.card_name || 'Müşteri'}
+                      {order.customer_name || order.card_name || 'Müşteri'}
                     </span>
                   </div>
 
