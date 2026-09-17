@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Header from './layout/Header';
 import PageContent from './layout/PageContent';
 import Footer from './layout/Footer';
+import ScrollToTop from './components/ScrollToTop';
 import { verifyToken, fetchRoles } from './store/actions/clientActions';
 
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
 
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col justify-between font-sans">
         <Header />
         <PageContent />
@@ -28,3 +30,4 @@ export default function App() {
     </BrowserRouter>
   );
 }
+
