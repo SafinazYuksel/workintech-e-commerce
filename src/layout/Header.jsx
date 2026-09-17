@@ -337,7 +337,7 @@ export default function Header() {
               title="Sepetime Git"
             >
               <CartIcon className="w-4 h-4" />
-              <span className="text-xs font-bold">{totalCartItems > 0 ? totalCartItems : 1}</span>
+              <span className="text-xs font-bold">{totalCartItems}</span>
             </Link>
 
             {/* Cart Dropdown Container */}
@@ -408,9 +408,9 @@ export default function Header() {
           </div>
 
           {/* Wishlist Button */}
-          <button className="text-[#23A6F0] hover:opacity-80 transition p-1 flex items-center gap-1">
+          <button className="text-[#23A6F0] hover:opacity-80 transition p-1 flex items-center gap-1" title="Favorilerim">
             <Heart className="w-4 h-4" />
-            <span className="text-xs font-bold">1</span>
+            <span className="text-xs font-bold">0</span>
           </button>
         </div>
 
