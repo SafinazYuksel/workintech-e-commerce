@@ -25,6 +25,12 @@ export const logout = () => {
 export const loginUser = (credentials, rememberMe, navigate) => async (dispatch) => {
   // Dedicated Admin Account Handler for admin@gmail.com
   if (credentials.email?.trim().toLowerCase() === 'admin@gmail.com') {
+    if (credentials.password !== 'Admin.1234') {
+      const errorMsg = 'Geçersiz yönetici şifresi. Lütfen şifrenizi kontrol ediniz.';
+      toast.error(errorMsg);
+      return { success: false, error: errorMsg };
+    }
+
     const adminData = {
       name: 'Sistem Yöneticisi',
       email: 'admin@gmail.com',
