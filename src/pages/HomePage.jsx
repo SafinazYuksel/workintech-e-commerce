@@ -7,6 +7,7 @@ import FeaturesSection from '../components/FeaturesSection';
 import VideoSection from '../components/VideoSection';
 import StatsSection from '../components/StatsSection';
 import SubscriptionSection from '../components/SubscriptionSection';
+import ClientsSection from '../components/ClientsSection';
 
 const sampleProducts = [
   {
@@ -74,6 +75,9 @@ export default function HomePage() {
 
       {/* Stats Section (desktop-stats-1 & mobile-stats-1) */}
       <StatsSection />
+
+      {/* Clients Section (desktop-clients-1 & mobile-clients-1) */}
+      <ClientsSection />
 
       {/* Subscription Section (desktop-subscription-1 & mobile-subscription-1) */}
       <SubscriptionSection />

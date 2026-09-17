@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Play, Users, Globe, Award, ShoppingBag, ArrowRight } from 'lucide-react';
+import ClientsSection from '../components/ClientsSection';
 
 export default function AboutPage() {
   const teamMembers = [
@@ -173,6 +174,9 @@ export default function AboutPage() {
           ))}
         </div>
       </section>
+
+      {/* 5.5 Clients / Partner Logos (desktop-clients-1 & mobile-clients-1) */}
+      <ClientsSection />
 
       {/* 6. Work With Us Banner Section */}
       <section className="bg-indigo-600 text-white py-16">
