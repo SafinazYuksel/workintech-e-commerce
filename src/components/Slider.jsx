@@ -16,11 +16,11 @@ const slides = [
   {
     id: 2,
     season: 'SUMMER 2020',
-    title: 'NEW COLLECTION',
+    title: "IT'S A SPECIAL GIFT",
     description: 'We know how large objects will act, but things on a small scale.',
     buttonText: 'SHOP NOW',
     image: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1200&q=80',
-    bgColor: 'bg-[#02B4E8]',
+    bgColor: 'bg-[#E74040]',
     buttonBg: 'bg-[#2DC071] hover:bg-[#28b268]'
   }
 ];
